@@ -71,6 +71,16 @@ public:
     string reverse();
 
     /**
+     * Checks whether this string starts with character ch.
+     */
+    bool startsWith(const char ch);
+
+    /**
+     * Checks whether this string ends with character ch.
+     */
+    bool endsWith(const char ch);
+
+    /**
      * Loops through the char* and counts the amount of characters.
      *  Essentially a custom strlen().
      */
