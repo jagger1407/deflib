@@ -41,6 +41,7 @@ char * string::inclen(u32 length) {
     char* new_alloc = NULL;
     while(new_alloc = (char*)realloc(_c_ptr, l), new_alloc == NULL);
     _c_ptr = new_alloc;
+    _real_len = l;
     for(int i=_len;i<l;i++) {
         _c_ptr[i] = 0x00;
     }
@@ -53,7 +54,7 @@ u32 string::length() const {
 }
 
 char * string::c_str() const {
-    return this->_c_ptr;
+    return this->_cur;
 }
 
 
@@ -64,7 +65,9 @@ string & string::operator=(const char* str) {
         free(_c_ptr);
     }
     _c_ptr = initptr(_len+1);
+    _real_len = _len+1;
     ncopy(_c_ptr, str, _len);
+    _cur = _c_ptr;
 
     return *this;
 }
@@ -96,6 +99,25 @@ string operator+(const string& left, const string& right) {
     s += (string)right;
     return s;
 }
+string operator+(const string& left, const char right) {
+    string s(left);
+    if(left._real_len <= left._len + 2) {
+        s.inclen(INC_STEP);
+    }
+    s._cur[s._len] = right;
+    s._len++;
+    return s;
+}
+string operator+(const char left, const string& right) {
+    string s(right);
+    if(right._real_len <= right._len + 2) {
+        s.inclen(INC_STEP);
+    }
+    string::ncopy(s._cur+1, right._cur, s._len);
+    s._cur[0] = left;
+    s._len++;
+    return s;
+}
 
 string & string::operator=(string& str) {
     if(this == &str) {
@@ -109,30 +131,45 @@ string & string::operator=(string& str) {
         _c_ptr = NULL;
     }
     _len = str.length();
-    _c_ptr = initptr(str.length()+1);
-    ncopy(_c_ptr,str.c_str(), _len);
+    _c_ptr = initptr(str._len+1);
+    _real_len = str._len+1;
+    ncopy(_c_ptr,str._c_ptr, _len);
 
     return *this;
 }
 string & string::operator+=(const string& str) {
-    if(this == &str || str.length() <= 0) {
+    if(this == &str || str._len <= 0) {
         return *this;
     }
-    inclen(str.length());
-    ncopy(_c_ptr + _len, str.c_str(), str.length());
-    _len += str.length();
+    inclen(str._len);
+    ncopy(_cur + _len, str._c_ptr, str.length());
+    _len += str._len;
 
     return *this;
 }
+string & string::operator+=(const char ch) {
+    if(_real_len <= _len + 2) {
+        inclen(INC_STEP);
+    }
+    _cur[_len] = ch;
+    _len++;
+    return *this;
+}
+
+
+char& string::operator[](u32 index) {
+    return *(_cur + index);
+}
+
 
 string string::reverse() {
     string s = string(*this);
 
     for(int i=0;i<(s._len/2);i++) {
         int r = s._len - 1 - i;
-        char tmp = s._c_ptr[r];
-        s._c_ptr[r] = s._c_ptr[i];
-        s._c_ptr[i] = tmp;
+        char tmp = s._cur[r];
+        s._cur[r] = s._cur[i];
+        s._cur[i] = tmp;
     }
 
     return s;
@@ -142,23 +179,37 @@ string string::reverse() {
 string::string() {
     _len = 0;
     _c_ptr = NULL;
+    _cur = NULL;
 }
 
 
 string::string(const char* str) {
     _len = len(str);
     _c_ptr = initptr(_len+1);
+    _real_len = _len + 1;
+    _cur = _c_ptr;
     ncopy(_c_ptr, str, _len);
 }
 
 string::string(const string& str) {
-    _len = str.length();
-    _c_ptr = initptr(_len+1);
-    ncopy(_c_ptr, str.c_str(), _len);
+    _real_len = str._real_len;
+    _len = str._len;
+    _c_ptr = initptr(_real_len);
+    _cur = _c_ptr;
+    ncopy(_c_ptr, str._c_ptr, _len);
+}
+
+string::string(u32 initial_size) {
+    _len = 0;
+    _c_ptr = initptr(initial_size);
+    _cur = _c_ptr;
+    _real_len = initial_size;
 }
 
 string::~string() {
     if(_c_ptr != NULL) {
         free(_c_ptr);
+        _c_ptr = NULL;
+        _cur = NULL;
     }
 }
