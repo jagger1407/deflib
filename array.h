@@ -13,15 +13,21 @@ TYPE
 class Array
 {
 public:
+    /** Creates an empty array.
+     */
     Array<T>() {
         _arrptr = NULL;
     }
+    /** Creates an array the size of num_el.
+     */
     Array<T>(u32 num_el) {
         _arrptr = NULL;
         while(_arrptr = (T*)malloc(num_el * sizeof(T)), _arrptr == NULL);
         _cur = _arrptr;
         _count = num_el;
     }
+    /** Creates an array by copying an existing one.
+     */
     Array<T>(const Array<T>& arr) {
         _arrptr = NULL;
         while(_arrptr = (T*)malloc(arr._count * sizeof(T)), _arrptr == NULL);
@@ -31,6 +37,8 @@ public:
             _arrptr[i] = arr._arrptr[i];
         }
     }
+    /** Destructor
+     */
     ~Array<T>() {
         if(_arrptr != NULL) {
             free(_arrptr);
@@ -71,10 +79,11 @@ public:
     T& operator*() {
         return *_cur;
     }
-    T* ptr() {
-        return _cur;
-    }
-
+    /** Returns the underlying C-Style pointer (T*).
+     */
+    T* ptr() { return _cur; }
+    /** Returns the amount of elements within this array.
+     */
     u32 length() { return _count; }
 private:
     T* _arrptr;
