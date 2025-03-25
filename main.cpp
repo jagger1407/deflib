@@ -4,9 +4,9 @@
 #include "cvt.h"
 
 void Main(StringArray args) {
-    bool b = true;
-
-    DefCon::PrintLine("Yeah that's pretty " + Cvt::ToString(b));
-
+    int number = Cvt::ToInt32(args[0]);
+    number += 1;
+    DefCon::PrintLine(Cvt::ToString(number));
 }
+
 
