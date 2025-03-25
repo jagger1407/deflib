@@ -1,13 +1,14 @@
 #include "string.h"
 #include "array.h"
+#include "defcon.h"
 
 void Main(Array<string> args) {
     string str = "";
 
     str += args[0];
 
-    puts(str.c_str());
-    printf("string length: %d\n", str.length());
-    puts(((string)"Reverse: " + str.reverse()).c_str());
+    DefCon::PrintLine("Word: " + str);
+    DefCon::Printf("String Length: %d\n", str.length());
+    DefCon::PrintLine("Reverse: " + str.reverse());
 }
 

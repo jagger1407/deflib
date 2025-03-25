@@ -12,6 +12,9 @@ set(deflib_SRC
 
     boot.cpp
 
+    defcon.h
+    defcon.cpp
+
     main.cpp
     main.h
 )
