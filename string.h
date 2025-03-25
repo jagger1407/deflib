@@ -4,6 +4,7 @@
 #include "types.h"
 #include <stdlib.h>
 #include <stdio.h>
+
 /**
  * @todo write docs
  */
@@ -13,24 +14,24 @@ public:
     string();
     string(const char* str);
     string(const string& str);
+    ~string();
     u32 length() const;
     char* c_str() const;
 
     string& operator=(const char* str);
     string& operator=(string& str);
 
-    friend string operator+(string& left, const char* right);
-    friend string operator+(const char* left, string& right);
-    friend string operator+(string& left, string& right);
+    friend string operator+(const string& left, const char* right);
+    friend string operator+(const char* left, const string& right);
+    friend string operator+(const string& left, const string& right);
 
     string& operator+=(const char* str);
-    string& operator+=(string& str);
+    string& operator+=(const string& str);
+
+    string reverse();
 
     static u32 len(const char* str);
     static char* ncopy(char* dest, const char* src, u32 n);
-
-    // TODO: remove
-    static void _puts(const string& str);
 private:
     u32 _len;
     char* _c_ptr;
@@ -40,6 +41,7 @@ private:
     static char* initptr(u32 len);
     char* inclen(u32 length);
 };
+
 
 
 #endif // STRING_H
