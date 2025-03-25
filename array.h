@@ -52,12 +52,12 @@ public:
         }
     }
 
-    Array<T>& operator+(s32 add) {
+    Array<T> operator+(s32 add) {
         Array<T> arr = Array<T>(*this);
         arr += add;
         return arr;
     }
-    Array<T>& operator-(s32 sub) {
+    Array<T> operator-(s32 sub) {
         Array<T> arr = Array<T>(*this);
         arr -= sub;
         return arr;

@@ -18,7 +18,7 @@ string Cvt::ToString(s32 number) {
         num_digits++;
     }
 
-    char s[num_digits+1];
+    char* s = new char[num_digits+1];
     for(int i=num_digits-1;i>=end;i--) {
         s[i] = '0' + (number % 10);
         number /= 10;
@@ -27,8 +27,9 @@ string Cvt::ToString(s32 number) {
     if(end > 0) {
         s[0] = '-';
     }
-
-    return string(s);
+    string out(s);
+    delete[] s;
+    return out;
 }
 string Cvt::ToString(u32 number) {
     int num_digits = 1;
@@ -38,14 +39,15 @@ string Cvt::ToString(u32 number) {
         num_digits++;
     }
 
-    char s[num_digits+1];
+    char* s = new char[num_digits+1];
     for(int i=num_digits-1;i>=0;i--) {
         s[i] = '0' + (number % 10);
         number /= 10;
     }
     s[num_digits] = 0x00;
-
-    return string(s);
+    string out(s);
+    delete[] s;
+    return out;
 }
 string Cvt::ToString(bool b) {
     return b ? string("true") : string("false");

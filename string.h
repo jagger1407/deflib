@@ -64,6 +64,8 @@ public:
 
     char& operator[](u32 index);
 
+    bool operator==(const string& str);
+
     /**
      * Returns a reversed version of this string.
      * @note This will not overwrite the original string.
@@ -86,11 +88,13 @@ public:
      */
     static u32 len(const char* str);
     /**
-     * Copies n bytes from dest to src.
+     *  Copies n bytes from dest to src.
      *  Essentially a custom memcpy().
      *  @note Does not stop when encountering a null terminator.
      */
     static char* ncopy(char* dest, const char* src, u32 n);
+
+    static int compare(const char* str1, const char* str2);
 private:
     u32 _len;
     char* _c_ptr;
