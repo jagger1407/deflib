@@ -3,9 +3,11 @@
 
 #include "types.h"
 #include <stdlib.h>
-#include <stdio.h>
 
 // Arbitrarily chosen idk
+// If the operator + or +/ is called with a char,
+// This is the amount of space that the array length will be increased by.
+// This way, realloc() will only be called every 20th appendage ideally.
 #define INC_STEP 20
 
 /** String Class
@@ -14,12 +16,29 @@
 class string
 {
 public:
+    /** Creates a string object.
+     *  Every Value will be 0/NULL.
+     */
     string();
+    /** Creates a string object with the given text.
+     */
     string(const char* str);
+    /** Creates a string object by copying another one.
+     */
     string(const string& str);
+    /** Creates a string object with a starting size.
+     *  @note Length will still be 0.
+     */
     string(u32 initial_size);
+    /** Destructor.
+     */
     ~string();
+    /** Returns the amount of characters in this string
+     *  excluding the null terminator.
+     */
     u32 length() const;
+    /** Returns the underlying C-Style String (char*).
+     */
     char* c_str() const;
 
     string& operator=(const char* str);
@@ -35,11 +54,21 @@ public:
     string& operator+=(const string& str);
     string& operator+=(const char ch);
 
-    string reverse();
-
     char& operator[](u32 index);
 
+    /** Returns a reversed version of this string.
+     * @note This will not overwrite the original string.
+     */
+    string reverse();
+
+    /** Loops through the char* and counts the amount of characters.
+     *  Essentially a custom strlen().
+     */
     static u32 len(const char* str);
+    /** Copies n bytes from dest to src.
+     *  Essentially a custom memcpy().
+     *  @note Does not stop when encountering a null terminator.
+     */
     static char* ncopy(char* dest, const char* src, u32 n);
 private:
     u32 _len;
@@ -52,7 +81,9 @@ private:
     static char* initptr(u32 len);
     char* inclen(u32 length);
 };
-
-
+/** String Class
+ * wrapper class for a char array, but with swag yk
+ */
+typedef string String;
 
 #endif // STRING_H
