@@ -161,7 +161,6 @@ char& string::operator[](u32 index) {
     return *(_cur + index);
 }
 
-
 string string::reverse() {
     string s = string(*this);
 
@@ -175,6 +174,13 @@ string string::reverse() {
     return s;
 }
 
+bool string::startsWith(const char ch) {
+    return *_cur == ch;
+}
+
+bool string::endsWith(const char ch) {
+    return _cur[_len-1] == ch;
+}
 
 string::string() {
     _len = 0;
