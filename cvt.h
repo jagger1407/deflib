@@ -21,6 +21,11 @@ public:
      * Converts a boolean into a string.
      */
     static string ToString(bool b);
+
+    /**
+     * Converts a string into an s32.
+     */
+    static s32 ToInt32(const string& str);
 private:
 };
 

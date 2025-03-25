@@ -51,3 +51,34 @@ string Cvt::ToString(bool b) {
     return b ? string("true") : string("false");
 }
 
+s32 Cvt::ToInt32(const string& str) {
+    s32 out = 0;
+
+    string s = string(str);
+    char* digit = s.c_str();
+    int len = s.length();
+    while(digit <= s.c_str()+s.length()-1) {
+        if(*digit != '+' && *digit != '-' && (*digit < '0' || *digit > '9')) {
+            len = digit - s.c_str();
+            break;
+        }
+        digit++;
+    }
+    digit = s.c_str();
+    int mult = 1;
+    int end = 0;
+    if(s.startsWith('-')) {
+        mult = -1;
+        end = 1;
+    }
+    else if(s.startsWith('+')) {
+        mult = 1;
+        end = 1;
+    }
+    for(int i=len-1;i>=end;i--) {
+        out += (digit[i] - '0') * mult;
+        mult *= 10;
+    }
+
+    return out;
+}
