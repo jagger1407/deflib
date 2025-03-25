@@ -12,7 +12,10 @@ class DefCon
 {
 public:
     static void PrintLine(const string& str);
+    static void Print(const string& str);
     static void Printf(const string& format, ...);
+    static string ReadLine();
+    static string ReadLine(const string& message);
 private:
 };
 
