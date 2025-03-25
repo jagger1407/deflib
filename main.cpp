@@ -1,20 +1,13 @@
 #include "string.h"
-#include <stdio.h>
+#include "array.h"
 
-int Main(int argc, string* args) {
-    puts(args[0].c_str());
+void Main(Array<string> args) {
+    string str = "";
 
-    return 0;
+    str += args[0];
+
+    puts(str.c_str());
+    printf("string length: %d\n", str.length());
+    puts(((string)"Reverse: " + str.reverse()).c_str());
 }
 
-#if 1 // call main
-int main(int argc, char **argv) {
-    string args[argc-1];
-
-    for(int i=1;i<argc;i++) {
-        args[i-1] = argv[i];
-    }
-
-    return Main(argc, args);
-}
-#endif

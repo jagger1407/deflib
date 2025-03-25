@@ -28,7 +28,8 @@ char * string::ncopy(char* dest, const char* src, u32 n) {
 }
 
 char * string::initptr(u32 len) {
-    char* ptr = (char*)malloc(len);
+    char* ptr = NULL;
+    while(ptr = (char*)malloc(len), ptr == NULL);
     for(int i=0;i<len;i++) {
         ptr[i] = 0x00;
     }
@@ -37,7 +38,9 @@ char * string::initptr(u32 len) {
 
 char * string::inclen(u32 length) {
     u32 l = _len + length + 1;
-    _c_ptr = (char*)realloc(_c_ptr, l);
+    char* new_alloc = NULL;
+    while(new_alloc = (char*)realloc(_c_ptr, l), new_alloc == NULL);
+    _c_ptr = new_alloc;
     for(int i=_len;i<l;i++) {
         _c_ptr[i] = 0x00;
     }
@@ -78,19 +81,19 @@ string & string::operator+=(const char* str) {
     _len += l;
     return *this;
 }
-string operator+(string& left, const char* right) {
+string operator+(const string& left, const char* right) {
     string s(left);
     s += right;
     return s;
 }
-string operator+(const char* left, string& right) {
+string operator+(const char* left, const string& right) {
     string s(left);
-    s += right;
+    s += (string)right;
     return s;
 }
-string operator+(string& left, string& right) {
+string operator+(const string& left, const string& right) {
     string s(left);
-    s += right;
+    s += (string)right;
     return s;
 }
 
@@ -111,7 +114,7 @@ string & string::operator=(string& str) {
 
     return *this;
 }
-string & string::operator+=(string& str) {
+string & string::operator+=(const string& str) {
     if(this == &str || str.length() <= 0) {
         return *this;
     }
@@ -121,6 +124,20 @@ string & string::operator+=(string& str) {
 
     return *this;
 }
+
+string string::reverse() {
+    string s = string(*this);
+
+    for(int i=0;i<(s._len/2);i++) {
+        int r = s._len - 1 - i;
+        char tmp = s._c_ptr[r];
+        s._c_ptr[r] = s._c_ptr[i];
+        s._c_ptr[i] = tmp;
+    }
+
+    return s;
+}
+
 
 string::string() {
     _len = 0;
@@ -140,8 +157,8 @@ string::string(const string& str) {
     ncopy(_c_ptr, str.c_str(), _len);
 }
 
-void string::_puts(const string& str)
-{
-    puts(str.c_str());
+string::~string() {
+    if(_c_ptr != NULL) {
+        free(_c_ptr);
+    }
 }
-
