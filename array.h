@@ -6,19 +6,22 @@
 
 #define TYPE template<typename T>
 
-/** Array class
+/**
+ * Array class
  * Wrapper for any kind of array, but with memory safety and all that
  */
 TYPE
 class Array
 {
 public:
-    /** Creates an empty array.
+    /**
+     * Creates an empty array.
      */
     Array<T>() {
         _arrptr = NULL;
     }
-    /** Creates an array the size of num_el.
+    /**
+     * Creates an array the size of num_el.
      */
     Array<T>(u32 num_el) {
         _arrptr = NULL;
@@ -26,7 +29,8 @@ public:
         _cur = _arrptr;
         _count = num_el;
     }
-    /** Creates an array by copying an existing one.
+    /**
+     * Creates an array by copying an existing one.
      */
     Array<T>(const Array<T>& arr) {
         _arrptr = NULL;
@@ -37,7 +41,8 @@ public:
             _arrptr[i] = arr._arrptr[i];
         }
     }
-    /** Destructor
+    /**
+     * Destructor
      */
     ~Array<T>() {
         if(_arrptr != NULL) {
@@ -79,10 +84,12 @@ public:
     T& operator*() {
         return *_cur;
     }
-    /** Returns the underlying C-Style pointer (T*).
+    /**
+     * Returns the underlying C-Style pointer (T*).
      */
     T* ptr() { return _cur; }
-    /** Returns the amount of elements within this array.
+    /**
+     * Returns the amount of elements within this array.
      */
     u32 length() { return _count; }
 private:
