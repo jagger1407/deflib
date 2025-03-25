@@ -27,6 +27,20 @@ char * string::ncopy(char* dest, const char* src, u32 n) {
     return dest;
 }
 
+int string::compare(const char* str1, const char* str2) {
+    if(str1 == str2) {
+        return 0;
+    }
+    char* s1 = (char*)str1;
+    char* s2 = (char*)str2;
+    while(*s1 != 0x00 && *s2 != 0x00) {
+        if(*s1++ != *s2++) {
+            return s1 - s2;
+        }
+    }
+    return 0;
+}
+
 char * string::initptr(u32 len) {
     char* ptr = NULL;
     while(ptr = (char*)malloc(len), ptr == NULL);
@@ -159,6 +173,10 @@ string & string::operator+=(const char ch) {
 
 char& string::operator[](u32 index) {
     return *(_cur + index);
+}
+
+bool string::operator==(const string& str) {
+    return compare(_cur, str._cur) == 0;
 }
 
 string string::reverse() {
