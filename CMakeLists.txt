@@ -15,6 +15,9 @@ set(deflib_SRC
     defcon.h
     defcon.cpp
 
+    cvt.h
+    cvt.cpp
+
     main.cpp
     main.h
 )
