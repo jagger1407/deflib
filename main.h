@@ -5,8 +5,9 @@
 // but this damn compiler wouldn't build it otherwise >:(
 
 #include "array.h"
+#include "string.h"
+typedef Array<string> StringArray;
 
-
-int Main(Array<string> args);
+void Main(StringArray args);
 
 #endif // MAIN_H_INCLUDED
