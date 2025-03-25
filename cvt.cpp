@@ -47,3 +47,7 @@ string Cvt::ToString(u32 number) {
 
     return string(s);
 }
+string Cvt::ToString(bool b) {
+    return b ? string("true") : string("false");
+}
+

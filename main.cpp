@@ -1,11 +1,12 @@
-#include "string.h"
+#include "main.h"
 #include "array.h"
 #include "defcon.h"
 #include "cvt.h"
 
-void Main(Array<string> args) {
+void Main(StringArray args) {
+    bool b = true;
 
-    DefCon::PrintLine(Cvt::ToString(0x80000001));
+    DefCon::PrintLine("Yeah that's pretty " + Cvt::ToString(b));
 
 }
 

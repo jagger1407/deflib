@@ -14,7 +14,9 @@ public:
     /** Converts a uint/u32 value into a string.
      */
     static string ToString(u32 number);
-
+    /** Converts a boolean into a string.
+     */
+    static string ToString(bool b);
 private:
 };
 
