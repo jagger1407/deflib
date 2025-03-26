@@ -237,6 +237,27 @@ bool string::endsWith(const string& str) {
     return ncomp(_cur + idx, str._cur, str._len) == 0;
 }
 
+string string::toLower() {
+    string s(*this);
+
+    for(int i=0;i<s._len;i++) {
+        if(s[i] >= 'A' && s[i] <= 'Z') {
+            s[i] += 'a' - 'A';
+        }
+    }
+    return s;
+}
+string string::toUpper() {
+    string s(*this);
+
+    for(int i=0;i<s._len;i++) {
+        if(s[i] >= 'a' && s[i] <= 'z') {
+            s[i] -= 'a' - 'A';
+        }
+    }
+    return s;
+}
+
 string::string() {
     _len = 0;
     _c_ptr = NULL;
