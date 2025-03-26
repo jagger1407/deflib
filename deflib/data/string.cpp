@@ -105,6 +105,32 @@ string & string::operator=(const char* str) {
 
     return *this;
 }
+string & string::operator=(const string& str) {
+    if(this == &str) {
+        return *this;
+    }
+    if(_c_ptr != NULL) {
+        free(_c_ptr);
+    }
+    if(str._real_len <= 0) {
+        _len = 0;
+        _real_len = 0;
+        _c_ptr = NULL;
+        _cur = NULL;
+    }
+    _len = str._len;
+    _c_ptr = initptr(str._real_len);
+    _cur = _c_ptr;
+    _real_len = str._real_len;
+    ncopy(_c_ptr,str._c_ptr, _len);
+
+    return *this;
+}
+
+bool string::operator==(const string& str) {
+    return comp(_cur, str._cur) == 0;
+}
+
 string & string::operator+=(const char* str) {
     if(str == NULL) {
         return *this;
@@ -118,6 +144,25 @@ string & string::operator+=(const char* str) {
     _len += l;
     return *this;
 }
+string & string::operator+=(const string& str) {
+    if(this == &str || str._len <= 0) {
+        return *this;
+    }
+    inclen(str._len);
+    ncopy(_cur + _len, str._c_ptr, str.length());
+    _len += str._len;
+
+    return *this;
+}
+string & string::operator+=(const char ch) {
+    if(_real_len <= _len + 2) {
+        inclen(INC_STEP);
+    }
+    _cur[_len] = ch;
+    _len++;
+    return *this;
+}
+
 string operator+(const string& left, const char* right) {
     string s(left);
     s += right;
@@ -153,53 +198,11 @@ string operator+(const char left, const string& right) {
     return s;
 }
 
-string & string::operator=(const string& str) {
-    if(this == &str) {
-        return *this;
-    }
-    if(_c_ptr != NULL) {
-        free(_c_ptr);
-    }
-    if(str.length() <= 0) {
-        _len = 0;
-        _c_ptr = NULL;
-    }
-    _len = str.length();
-    _c_ptr = initptr(str._len+1);
-    _real_len = str._len+1;
-    ncopy(_c_ptr,str._c_ptr, _len);
-
-    return *this;
-}
-string & string::operator+=(const string& str) {
-    if(this == &str || str._len <= 0) {
-        return *this;
-    }
-    inclen(str._len);
-    ncopy(_cur + _len, str._c_ptr, str.length());
-    _len += str._len;
-
-    return *this;
-}
-string & string::operator+=(const char ch) {
-    if(_real_len <= _len + 2) {
-        inclen(INC_STEP);
-    }
-    _cur[_len] = ch;
-    _len++;
-    return *this;
-}
-
-
 char& string::operator[](u32 index) {
     if(index < 0 || index >= _len) {
         raise(SIGSEGV);
     }
     return *(_cur + index);
-}
-
-bool string::operator==(const string& str) {
-    return comp(_cur, str._cur) == 0;
 }
 
 string string::reverse() {
@@ -222,7 +225,9 @@ bool string::startsWith(const string& str) {
     if(str._cur == NULL || str._len == 0) {
         return false;
     }
-
+    if(str._len == 1) {
+        return startsWith(*str._cur);
+    }
     return ncomp(_cur, str._cur, str._len) == 0;
 }
 
@@ -232,6 +237,9 @@ bool string::endsWith(const char ch) {
 bool string::endsWith(const string& str) {
     if(str._cur == NULL || str._len == 0) {
         return false;
+    }
+    if(str._len == 1) {
+        return endsWith(*str._cur);
     }
     int idx = _len - str._len;
     if(idx < 0) {
@@ -259,6 +267,139 @@ string string::toUpper() {
         }
     }
     return s;
+}
+int string::countOccurrences(const char ch) {
+    if(_cur == NULL || _c_ptr == NULL || _len == 0) {
+        return 0;
+    }
+    int cnt = 0;
+    for(int i=0;i<_len;i++) {
+        if(_cur[i] == ch) {
+            cnt++;
+        }
+    }
+    return cnt;
+}
+int string::countOccurrences(const string& str) {
+    if(_cur == NULL || _c_ptr == NULL || _len <= 0 || _len < str._len) {
+        return 0;
+    }
+    if(str._len == 1) {
+        return countOccurrences(*str._cur);
+    }
+
+    char* splstr = str._cur;
+    int cnt = 0;
+    for(int i=0;i<_len;i++) {
+        if(_cur[i] == splstr[0]) {
+            if(ncomp(_cur + i, splstr, str._len) == 0) {
+                cnt++;
+            }
+        }
+    }
+    return cnt;
+}
+
+Array<int> string::getOccurrences(const char ch) {
+    int count = countOccurrences(ch);
+    if(count == 0) {
+        return Array<int>();
+    }
+    Array<int> arr(count);
+
+    int oc = 0;
+    for(int i=0;i<_len;i++) {
+        if(_cur[i] == ch) {
+            arr[oc] = i;
+            oc++;
+        }
+    }
+
+    return arr;
+}
+
+Array<int> string::getOccurrences(const string& str) {
+    int count = countOccurrences(str);
+    if(str._len == 1){
+        return getOccurrences(*str._cur);
+    }
+    if(count == 0) {
+        return Array<int>();
+    }
+    Array<int> arr(count);
+
+    char* splstr = str._cur;
+    int oc = 0;
+    for(int i=0;i<_len;i++) {
+        if(_cur[i] == splstr[0]) {
+            if(ncomp(_cur + i, splstr, str._len) == 0) {
+                arr[oc] = i;
+                oc++;
+            }
+        }
+    }
+
+    return arr;
+}
+
+Array<string> string::split(const char ch) {
+    if(_c_ptr == NULL || _cur == NULL) {
+        return NULL;
+    }
+    string s(*this);
+    Array<int> occ = getOccurrences(ch);
+    int occlen = occ.length();
+    int arrlen = occlen + 1;
+    Array<string> arr(arrlen);
+    if(occlen == 0) {
+        arr[0] = *this;
+        return arr;
+    }
+    int start = -1;
+    for(int i=0;i<occlen;i++) {
+        start++;
+        arr[i] = string(occ[i] - start + 1);
+        ncopy(arr[i]._cur, _cur + start, occ[i] - start);
+        arr[i]._len = occ[i] - start;
+        start = occ[i];
+    }
+    arr[arrlen-1] = string(_len - occ[occlen-1]);
+    ncopy(arr[arrlen-1]._cur, _cur + start + 1, arr[arrlen-1]._real_len);
+    arr[arrlen-1]._len = _len - occ[occlen-1];
+
+    return arr;
+}
+Array<string> string::split(const string& str) {
+    if(_c_ptr == NULL || _cur == NULL ||  str._cur == NULL || str._len == 0 || _len == 0) {
+        return NULL;
+    }
+    if(str._len == 1) {
+        return split(*str._cur);
+    }
+
+    string s(*this);
+    Array<int> occ = getOccurrences(str);
+    int occlen = occ.length();
+    int arrlen = occlen + 1;
+    Array<string> arr(arrlen);
+    if(occlen == 0) {
+        arr[0] = *this;
+        return arr;
+    }
+    int start = 0 - str._len;
+    for(int i=0;i<occlen;i++) {
+        start += str._len;
+        arr[i] = string(occ[i] - start + 1);
+        ncopy(arr[i]._cur, _cur + start, occ[i] - start);
+        arr[i]._len = occ[i] - start;
+        start = occ[i];
+    }
+    start += str._len;
+    arr[arrlen-1] = string(_len - (occ[occlen-1] + str._len) + 1);
+    ncopy(arr[arrlen-1]._cur, _cur + start, arr[arrlen-1]._real_len);
+    arr[arrlen-1]._len = _len - occ[occlen-1];
+
+    return arr;
 }
 
 string::string() {

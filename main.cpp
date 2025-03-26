@@ -1,14 +1,22 @@
 #include "main.h"
 #include "deflib/deflib.h"
 
+#define OPTION_NAME 0
+#define OPTION_VALUE 1
+
 void Program::Main(StringArray args) {
-    string s = "SOME.PACK";
+    string s = "option = setting\n";
+    s += "option2 = black\n";
+    s += "size = 500\n";
 
-    s = s.toLower();
+    StringArray sa = s.split("\n");
 
-    ByteArray ba = { 0xFF, 0xBB, 0x00 };
-
-    DefCon::Printf("0x%02x\n", ba[2]);
+    for(int i=0;i<sa.count();i++) {
+        StringArray option = sa[i].split(" = ");
+        if(option.count() >= 2) {
+            DefCon::PrintLine(sa[i].split(" = ")[OPTION_VALUE]);
+        }
+    }
 }
 
 
