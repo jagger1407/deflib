@@ -153,7 +153,7 @@ string operator+(const char left, const string& right) {
     return s;
 }
 
-string & string::operator=(string& str) {
+string & string::operator=(const string& str) {
     if(this == &str) {
         return *this;
     }

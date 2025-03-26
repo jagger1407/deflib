@@ -4,7 +4,9 @@
 void Program::Main(StringArray args) {
     string s = "SOME.PACK";
 
-    if(s.toLower().endsWith(".pak")) {
+    s = s.toLower();
+
+    if(s.endsWith(".pak")) {
         DefCon::PrintLine("string is a pak");
     }
     else {

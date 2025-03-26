@@ -50,7 +50,7 @@ public:
     char* c_str() const;
 
     string& operator=(const char* str);
-    string& operator=(string& str);
+    string& operator=(const string& str);
 
     friend string operator+(const string& left, const char* right);
     friend string operator+(const char* left, const string& right);
