@@ -108,12 +108,12 @@ public:
      */
     int countOccurrences(const string& str);
     /**
-     * Gets the amount of occurrences of character ch
+     * Gets the of occurrences of character ch
      * as an int array containing the index of each occurrence.
      */
     Array<int> getOccurrences(const char ch);
     /**
-     * Gets the amount of occurrences of string str
+     * Gets the of occurrences of string str
      * as an int array containing the index of each occurrence.
      */
     Array<int> getOccurrences(const string& str);
@@ -127,28 +127,27 @@ public:
     Array<string> split(const string& str);
 
     /**
+     * Copies n characters of this string into another string starting at index start.
+     */
+    string substring(u32 start, u32 n);
+
+    /**
      * Loops through the char* and counts the amount of characters.
      *  Essentially a custom strlen().
      */
     static u32 len(const char* str);
     /**
-     *  Copies n bytes from dest to src.
-     *  Essentially a custom memcpy().
-     *  @note Does not stop when encountering a null terminator.
-     */
-    static char* ncopy(char* dest, const char* src, u32 n);
-    /**
      * Compares 2 strings.
      * Returns 0 if both are equal, non-0 if not.
      * Essentially just a custom strcmp().
      */
-    static int comp(const char* str1, const char* str2);
+    static int compare(const char* str1, const char* str2);
     /**
      * Compares the first n chars of a string.
      * Returns 0 if both are equal, non-0 if not.
      * Essentially just a custom strncmp().
      */
-    static int ncomp(const char* str1, const char* str2, u32 n);
+    static int compare_n(const char* str1, const char* str2, u32 n);
 private:
     u32 _len;
     char* _c_ptr;

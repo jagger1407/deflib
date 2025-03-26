@@ -4,7 +4,7 @@
 #include "data/string.h"
 
 /**
- * Convert Class
+ * Conversion Class
  */
 class Cvt
 {
