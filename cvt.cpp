@@ -1,27 +1,47 @@
 #include "cvt.h"
 
-string Cvt::ToString(s32 number) {
-    if(number == 0x80000000) {
-        // can't be turned into a positive s32
-        // so I had to treat it seperately
-        return string("-2147483648");
+string Cvt::ToString(bool b) {
+    return b ? string("true") : string("false");
+}
+
+string Cvt::ToString(char ch) {
+    return ToString((s64)ch);
+}
+string Cvt::ToString(byte value) {
+    return ToString((u64)value);
+}
+string Cvt::ToString(s16 value) {
+    return ToString((s64)value);
+}
+string Cvt::ToString(u16 value) {
+    return ToString((u64)value);
+}
+string Cvt::ToString(s32 value) {
+    return ToString((s64)value);
+}
+string Cvt::ToString(u32 value) {
+    return ToString((u64)value);
+}
+string Cvt::ToString(s64 value) {
+    if(value == (s64)0x8000000000000000) {
+        return string("-9223372036854775808");
     }
     int num_digits = 1;
     int end = 0;
-    if(number < 0)  {
-        number = (~number) + 1;
+    if(value < 0)  {
+        value = (~value) + 1;
         num_digits++;
         end = 1;
     }
-    int tmp = number;
+    s64 tmp = value;
     while(tmp /= 10, tmp > 0) {
         num_digits++;
     }
 
     char* s = new char[num_digits+1];
     for(int i=num_digits-1;i>=end;i--) {
-        s[i] = '0' + (number % 10);
-        number /= 10;
+        s[i] = '0' + (value % 10);
+        value /= 10;
     }
     s[num_digits] = 0x00;
     if(end > 0) {
@@ -31,30 +51,37 @@ string Cvt::ToString(s32 number) {
     delete[] s;
     return out;
 }
-string Cvt::ToString(u32 number) {
+string Cvt::ToString(u64 value) {
     int num_digits = 1;
 
-    u32 tmp = number;
+    u64 tmp = value;
     while(tmp /= 10, tmp > 0) {
         num_digits++;
     }
 
     char* s = new char[num_digits+1];
     for(int i=num_digits-1;i>=0;i--) {
-        s[i] = '0' + (number % 10);
-        number /= 10;
+        s[i] = '0' + (value % 10);
+        value /= 10;
     }
     s[num_digits] = 0x00;
     string out(s);
     delete[] s;
     return out;
 }
-string Cvt::ToString(bool b) {
-    return b ? string("true") : string("false");
-}
 
+
+s8 Cvt::ToInt8(const string& str) {
+    return (s8)(ToInt64(str) % 0x100);
+}
+s16 Cvt::ToInt16(const string& str) {
+    return (s16)(ToInt64(str) % 0x10000);
+}
 s32 Cvt::ToInt32(const string& str) {
-    s32 out = 0;
+    return (s32)(ToInt64(str) % 0x100000000);
+}
+s64 Cvt::ToInt64(const string& str) {
+    s64 out = 0;
 
     string s = string(str);
     char* digit = s.c_str();
@@ -67,7 +94,7 @@ s32 Cvt::ToInt32(const string& str) {
         digit++;
     }
     digit = s.c_str();
-    int mult = 1;
+    s64 mult = 1;
     int end = 0;
     if(s.startsWith('-')) {
         mult = -1;

@@ -8,8 +8,5 @@ void Main(StringArray args) {
     string str2 = "s";
     str2 += "ex";
 
-    DefCon::PrintLine(Cvt::ToString(str1.c_str() == str2.c_str()));
-    DefCon::PrintLine(Cvt::ToString(str1 == str2));
+    DefCon::PrintLine(Cvt::ToString((u8)Cvt::ToInt8("1000")));
 }
-
-
