@@ -1,7 +1,7 @@
 #ifndef DEFCON_H
 #define DEFCON_H
 
-#include "string.h"
+#include "../data/string.h"
 #include <stdio.h>
 #include <stdarg.h>
 
