@@ -27,7 +27,7 @@ char * string::ncopy(char* dest, const char* src, u32 n) {
     return dest;
 }
 
-int string::compare(const char* str1, const char* str2) {
+int string::comp(const char* str1, const char* str2) {
     if(str1 == str2) {
         return 0;
     }
@@ -35,10 +35,30 @@ int string::compare(const char* str1, const char* str2) {
     char* s2 = (char*)str2;
     while(*s1 != 0x00 && *s2 != 0x00) {
         if(*s1++ != *s2++) {
-            return s1 - s2;
+            return *s1 - *s2;
         }
     }
-    return 0;
+    return *s1 - *s2;
+}
+
+int string::ncomp(const char* str1, const char* str2, u32 n) {
+    if(str1 == str2) {
+        return 0;
+    }
+    if(n < 0) {
+        return n;
+    }
+    char* s1 = (char*)str1;
+    char* s2 = (char*)str2;
+    for(int i=0;i<n;i++) {
+        if(s1[i] == 0x00 || s2[i] == 0x00) {
+            return s1[i] - s2[i];
+        }
+        if(s1[i] != s2[i]) {
+            return s1[i] - s2[i];
+        }
+    }
+    return *s1 - *s2;
 }
 
 char * string::initptr(u32 len) {
@@ -176,7 +196,7 @@ char& string::operator[](u32 index) {
 }
 
 bool string::operator==(const string& str) {
-    return compare(_cur, str._cur) == 0;
+    return comp(_cur, str._cur) == 0;
 }
 
 string string::reverse() {
@@ -195,9 +215,26 @@ string string::reverse() {
 bool string::startsWith(const char ch) {
     return *_cur == ch;
 }
+bool string::startsWith(const string& str) {
+    if(str._cur == NULL || str._len == 0) {
+        return false;
+    }
+
+    return ncomp(_cur, str._cur, str._len) == 0;
+}
 
 bool string::endsWith(const char ch) {
     return _cur[_len-1] == ch;
+}
+bool string::endsWith(const string& str) {
+    if(str._cur == NULL || str._len == 0) {
+        return false;
+    }
+    int idx = _len - str._len;
+    if(idx < 0) {
+        return false;
+    }
+    return ncomp(_cur + idx, str._cur, str._len) == 0;
 }
 
 string::string() {
