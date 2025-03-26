@@ -2,6 +2,8 @@
 #define ARRAY_H
 
 #include <stdlib.h>
+#include <initializer_list>
+#include <signal.h>
 #include "../types.h"
 
 /**
@@ -39,10 +41,25 @@ public:
             _arrptr[i] = arr._arrptr[i];
         }
     }
-    Array<T>(const T* ptr, u32 size) {
+    /**
+     * Creates an array by wrapping around an existing C-Style array.
+     */
+    Array<T>(u32 size, const T* ptr) {
         _arrptr = ptr;
         _cur = ptr;
         _count = size;
+    }
+    /**
+     * Creates an array by initializer list.
+     * e.g. Array<int> arr = { 1, 2, 3 };
+     * I genuinely have no idea how std does it here
+     * TODO: Fucking get rid of stds entirely
+     */
+    Array<T>(std::initializer_list<T> list) : Array<T>(list.size()) {
+        const T* ptr = list.begin();
+        for(int i=0;i<list.size();i++) {
+            _arrptr[i] = *ptr++;
+        }
     }
     /**
      * Destructor
@@ -56,12 +73,12 @@ public:
     }
 
     Array<T> operator+(s32 add) {
-        Array<T> arr = Array<T>(_cur, _count);
+        Array<T> arr = Array<T>(_count, _cur);
         arr += add;
         return arr;
     }
     Array<T> operator-(s32 sub) {
-        Array<T> arr = Array<T>(_cur, _count);
+        Array<T> arr = Array<T>(_count, _cur);
         arr -= sub;
         return arr;
     }
@@ -82,6 +99,9 @@ public:
         return *this;
     }
     T& operator[](u32 index) {
+        if(index < 0 || index >= _count) {
+            raise(SIGSEGV);
+        }
         return _cur[index];
     }
     T& operator*() {

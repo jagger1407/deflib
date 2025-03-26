@@ -192,6 +192,9 @@ string & string::operator+=(const char ch) {
 
 
 char& string::operator[](u32 index) {
+    if(index < 0 || index >= _len) {
+        raise(SIGSEGV);
+    }
     return *(_cur + index);
 }
 

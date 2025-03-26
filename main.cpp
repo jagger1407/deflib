@@ -6,12 +6,9 @@ void Program::Main(StringArray args) {
 
     s = s.toLower();
 
-    if(s.endsWith(".pak")) {
-        DefCon::PrintLine("string is a pak");
-    }
-    else {
-        DefCon::PrintLine("packwatch failed rip bozo");
-    }
+    ByteArray ba = { 0xFF, 0xBB, 0x00 };
+
+    DefCon::Printf("0x%02x\n", ba[2]);
 }
 
 
