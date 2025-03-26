@@ -2,8 +2,9 @@
 #define STRING_H
 
 #include "../types.h"
+#include "../collections/array.h"
 #include <stdlib.h>
-#include <signal.h>
+
 
 // Arbitrarily chosen idk
 // If the operator + or +/ is called with a char,
@@ -98,6 +99,32 @@ public:
      * Creates a copy of the string with all characters being uppercase.
      */
     string toUpper();
+    /**
+     * Counts the amount of occurrences of the character ch in the string.
+     */
+    int countOccurrences(const char ch);
+    /**
+     * Counts the amount of occurrences of the substring str in the string.
+     */
+    int countOccurrences(const string& str);
+    /**
+     * Gets the amount of occurrences of character ch
+     * as an int array containing the index of each occurrence.
+     */
+    Array<int> getOccurrences(const char ch);
+    /**
+     * Gets the amount of occurrences of string str
+     * as an int array containing the index of each occurrence.
+     */
+    Array<int> getOccurrences(const string& str);
+    /**
+     * Splits a string using char ch as a seperator.
+     */
+    Array<string> split(const char ch);
+    /**
+     * Splits a string using string str as a seperator.
+     */
+    Array<string> split(const string& str);
 
     /**
      * Loops through the char* and counts the amount of characters.
