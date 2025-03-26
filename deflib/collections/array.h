@@ -11,11 +11,21 @@
 *  Essentially a custom memcpy().
 *  @note Does not stop when encountering a null terminator.
 */
-static void * copy_mem(void* dest, const void* src, u32 n) {
+static void * copy_mem(void* dest, const void* src, u64 n) {
     u8* p1 = (u8*)dest;
     u8* p2 = (u8*)src;
-    for(int i=0;i<n;i++) {
+    for(u64 i=0;i<n;i++) {
         p1[i] = p2[i];
+    }
+    return dest;
+}
+/**
+ *
+ */
+static void * fill_mem(void* dest, u8 byte, u64 n) {
+    u8* ptr = (u8*)dest;
+    for(u64 i=0;i<n;i++) {
+        ptr[i] = byte;
     }
     return dest;
 }
@@ -59,6 +69,7 @@ public:
     }
     /**
      * Creates an array by wrapping around an existing C-Style array.
+     * @note ptr should already be allocated via malloc/calloc.
      */
     Array<T>(u32 size, const T* ptr) {
         _arrptr = ptr;
@@ -130,29 +141,45 @@ public:
     /**
      * Returns the amount of elements within this array.
      */
-    u32 length() { return _count; }
+    u64 length() { return _count; }
     /**
      * Returns the amount of elements within this array.
      */
-    u32 count() { return _count; }
+    u64 count() { return _count; }
     /**
      * Returns the total size of this array in Bytes.
      */
-    u32 size() { return _count * sizeof(T); }
+    u64 size() { return _count * sizeof(T); }
 
     /**
     *  Copies n elements from dest to src.
     */
-    static char * ncopy(T* dest, const T* src, u32 n) {
+    static T* ncopy(T* dest, const T* src, u32 n) {
         for(int i=0;i<n;i++) {
             dest[i] = src[i];
         }
         return dest;
     }
+    /**
+     * Copies an array into another.
+     * If dest < src, copy until dest full
+     * If dest > src, copy until src fully copied
+     */
+    static Array<T>& copy(Array<T>& dest, const Array<T>& src) {
+        if(dest._cur == NULL || src._cur == NULL) {
+            return NULL;
+        }
+        u64 n = dest._count < src._count ? dest._count : src._count;
+        for(int i=0;i<n;i++) {
+            dest[i] = src[i];
+        }
+        return dest;
+    }
+
 private:
     T* _arrptr;
     T* _cur;
-    u32 _count;
+    u64 _count;
 };
 
 #endif // ARRAY_H

@@ -13,6 +13,8 @@ set(deflib_INC
 
     deflib/io/defcon.h
     deflib/io/defcon.cpp
+    deflib/io/file.h
+    deflib/io/file.cpp
 
     deflib/cvt.h
     deflib/cvt.cpp

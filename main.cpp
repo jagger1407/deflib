@@ -5,11 +5,11 @@
 #define OPTION_VALUE 1
 
 void Program::Main(StringArray args) {
-    string s = "option = setting\n";
-    s += "option2 = black\n";
-    s += "size = 500\n";
+    File f("text.txt", File::OpenMode::Read, false);
+    ByteArray ba = ByteArray();
+    f.read(ba, f.size()+1);
 
-    DefCon::PrintLine(s.substring(9, 7));
+    DefCon::PrintLine(Cvt::ToString(ba));
 }
 
 

@@ -2,6 +2,7 @@
 #define CVT_H
 
 #include "data/string.h"
+#include "collections/array.h"
 
 /**
  * Conversion Class
@@ -45,6 +46,11 @@ public:
      * Converts a ulonglong/u64 value into a string.
      */
     static string ToString(u64 value);
+    /**
+     * Converts a ByteArray/Array<u8> into a string.
+     * @note assumes null termination.
+     */
+    static string ToString(Array<u8> array);
 
     /**
      * Converts a string into a char/s8.

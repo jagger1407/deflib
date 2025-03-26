@@ -19,5 +19,6 @@ typedef Array<u32> UInt32Array;
 typedef Array<u64> UInt64Array;
 
 #include "io/defcon.h"
+#include "io/file.h"
 
 #endif

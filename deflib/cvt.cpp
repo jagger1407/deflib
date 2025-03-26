@@ -69,6 +69,9 @@ string Cvt::ToString(u64 value) {
     delete[] s;
     return out;
 }
+string Cvt::ToString(Array<u8> array) {
+    return string((char*)array.ptr());
+}
 
 
 s8 Cvt::ToInt8(const string& str) {
