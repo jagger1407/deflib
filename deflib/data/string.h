@@ -3,6 +3,7 @@
 
 #include "../types.h"
 #include <stdlib.h>
+#include <signal.h>
 
 // Arbitrarily chosen idk
 // If the operator + or +/ is called with a char,
