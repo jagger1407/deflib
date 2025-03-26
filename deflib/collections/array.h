@@ -7,6 +7,20 @@
 #include "../types.h"
 
 /**
+*  Copies n bytes from dest to src.
+*  Essentially a custom memcpy().
+*  @note Does not stop when encountering a null terminator.
+*/
+static void * copy_mem(void* dest, const void* src, u32 n) {
+    u8* p1 = (u8*)dest;
+    u8* p2 = (u8*)src;
+    for(int i=0;i<n;i++) {
+        p1[i] = p2[i];
+    }
+    return dest;
+}
+
+/**
  * Array class
  * Wrapper for any kind of array, but with memory safety and all that
  */
@@ -125,6 +139,16 @@ public:
      * Returns the total size of this array in Bytes.
      */
     u32 size() { return _count * sizeof(T); }
+
+    /**
+    *  Copies n elements from dest to src.
+    */
+    static char * ncopy(T* dest, const T* src, u32 n) {
+        for(int i=0;i<n;i++) {
+            dest[i] = src[i];
+        }
+        return dest;
+    }
 private:
     T* _arrptr;
     T* _cur;

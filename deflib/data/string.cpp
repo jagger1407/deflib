@@ -19,15 +19,7 @@ u32 string::len(const char* str) {
     return len;
 }
 
-char * string::ncopy(char* dest, const char* src, u32 n) {
-    for(int i=0;i<n;i++) {
-        dest[i] = src[i];
-    }
-
-    return dest;
-}
-
-int string::comp(const char* str1, const char* str2) {
+int string::compare(const char* str1, const char* str2) {
     if(str1 == str2) {
         return 0;
     }
@@ -41,7 +33,7 @@ int string::comp(const char* str1, const char* str2) {
     return *s1 - *s2;
 }
 
-int string::ncomp(const char* str1, const char* str2, u32 n) {
+int string::compare_n(const char* str1, const char* str2, u32 n) {
     if(str1 == str2) {
         return 0;
     }
@@ -100,7 +92,7 @@ string & string::operator=(const char* str) {
     }
     _c_ptr = initptr(_len+1);
     _real_len = _len+1;
-    ncopy(_c_ptr, str, _len);
+    copy_mem(_c_ptr, str, _len);
     _cur = _c_ptr;
 
     return *this;
@@ -122,13 +114,13 @@ string & string::operator=(const string& str) {
     _c_ptr = initptr(str._real_len);
     _cur = _c_ptr;
     _real_len = str._real_len;
-    ncopy(_c_ptr,str._c_ptr, _len);
+    copy_mem(_c_ptr,str._c_ptr, _len);
 
     return *this;
 }
 
 bool string::operator==(const string& str) {
-    return comp(_cur, str._cur) == 0;
+    return compare(_cur, str._cur) == 0;
 }
 
 string & string::operator+=(const char* str) {
@@ -140,7 +132,7 @@ string & string::operator+=(const char* str) {
         return *this;
     }
     inclen(l);
-    ncopy(_c_ptr + _len, str, l);
+    copy_mem(_c_ptr + _len, str, l);
     _len += l;
     return *this;
 }
@@ -149,7 +141,7 @@ string & string::operator+=(const string& str) {
         return *this;
     }
     inclen(str._len);
-    ncopy(_cur + _len, str._c_ptr, str.length());
+    copy_mem(_cur + _len, str._c_ptr, str.length());
     _len += str._len;
 
     return *this;
@@ -192,7 +184,7 @@ string operator+(const char left, const string& right) {
     if(right._real_len <= right._len + 2) {
         s.inclen(INC_STEP);
     }
-    string::ncopy(s._cur+1, right._cur, s._len);
+    copy_mem(s._cur+1, right._cur, s._len);
     s._cur[0] = left;
     s._len++;
     return s;
@@ -228,7 +220,7 @@ bool string::startsWith(const string& str) {
     if(str._len == 1) {
         return startsWith(*str._cur);
     }
-    return ncomp(_cur, str._cur, str._len) == 0;
+    return compare_n(_cur, str._cur, str._len) == 0;
 }
 
 bool string::endsWith(const char ch) {
@@ -245,7 +237,7 @@ bool string::endsWith(const string& str) {
     if(idx < 0) {
         return false;
     }
-    return ncomp(_cur + idx, str._cur, str._len) == 0;
+    return compare_n(_cur + idx, str._cur, str._len) == 0;
 }
 
 string string::toLower() {
@@ -292,7 +284,7 @@ int string::countOccurrences(const string& str) {
     int cnt = 0;
     for(int i=0;i<_len;i++) {
         if(_cur[i] == splstr[0]) {
-            if(ncomp(_cur + i, splstr, str._len) == 0) {
+            if(compare_n(_cur + i, splstr, str._len) == 0) {
                 cnt++;
             }
         }
@@ -332,7 +324,7 @@ Array<int> string::getOccurrences(const string& str) {
     int oc = 0;
     for(int i=0;i<_len;i++) {
         if(_cur[i] == splstr[0]) {
-            if(ncomp(_cur + i, splstr, str._len) == 0) {
+            if(compare_n(_cur + i, splstr, str._len) == 0) {
                 arr[oc] = i;
                 oc++;
             }
@@ -359,12 +351,12 @@ Array<string> string::split(const char ch) {
     for(int i=0;i<occlen;i++) {
         start++;
         arr[i] = string(occ[i] - start + 1);
-        ncopy(arr[i]._cur, _cur + start, occ[i] - start);
+        copy_mem(arr[i]._cur, _cur + start, occ[i] - start);
         arr[i]._len = occ[i] - start;
         start = occ[i];
     }
     arr[arrlen-1] = string(_len - occ[occlen-1]);
-    ncopy(arr[arrlen-1]._cur, _cur + start + 1, arr[arrlen-1]._real_len);
+    copy_mem(arr[arrlen-1]._cur, _cur + start + 1, arr[arrlen-1]._real_len);
     arr[arrlen-1]._len = _len - occ[occlen-1];
 
     return arr;
@@ -390,17 +382,30 @@ Array<string> string::split(const string& str) {
     for(int i=0;i<occlen;i++) {
         start += str._len;
         arr[i] = string(occ[i] - start + 1);
-        ncopy(arr[i]._cur, _cur + start, occ[i] - start);
+        copy_mem(arr[i]._cur, _cur + start, occ[i] - start);
         arr[i]._len = occ[i] - start;
         start = occ[i];
     }
     start += str._len;
     arr[arrlen-1] = string(_len - (occ[occlen-1] + str._len) + 1);
-    ncopy(arr[arrlen-1]._cur, _cur + start, arr[arrlen-1]._real_len);
+    copy_mem(arr[arrlen-1]._cur, _cur + start, arr[arrlen-1]._real_len);
     arr[arrlen-1]._len = _len - occ[occlen-1];
 
     return arr;
 }
+string string::substring(u32 start, u32 n) {
+    if(_c_ptr == NULL || _cur == NULL || _len <= 0) {
+        return string();
+    }
+    if(start + n > _len) {
+        n = _len - start;
+    }
+    string s(n+1);
+    copy_mem(s._cur, _cur + start, n);
+    s._len = n;
+    return s;
+}
+
 
 string::string() {
     _len = 0;
@@ -414,7 +419,7 @@ string::string(const char* str) {
     _c_ptr = initptr(_len+1);
     _real_len = _len + 1;
     _cur = _c_ptr;
-    ncopy(_c_ptr, str, _len);
+    copy_mem(_c_ptr, str, _len);
 }
 
 string::string(const string& str) {
@@ -422,7 +427,7 @@ string::string(const string& str) {
     _len = str._len;
     _c_ptr = initptr(_real_len);
     _cur = _c_ptr;
-    ncopy(_c_ptr, str._c_ptr, _len);
+    copy_mem(_c_ptr, str._c_ptr, _len);
 }
 
 string::string(u32 initial_size) {
