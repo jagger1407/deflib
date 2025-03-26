@@ -19,6 +19,8 @@ public:
      */
     Array<T>() {
         _arrptr = NULL;
+        _cur = NULL;
+        _count = 0;
     }
     /**
      * Creates an array the size of num_el.
@@ -115,6 +117,14 @@ public:
      * Returns the amount of elements within this array.
      */
     u32 length() { return _count; }
+    /**
+     * Returns the amount of elements within this array.
+     */
+    u32 count() { return _count; }
+    /**
+     * Returns the total size of this array in Bytes.
+     */
+    u32 size() { return _count * sizeof(T); }
 private:
     T* _arrptr;
     T* _cur;
