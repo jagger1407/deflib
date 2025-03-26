@@ -2,8 +2,14 @@
 #include "deflib/deflib.h"
 
 void Program::Main(StringArray args) {
-    string s = "Lmao.xd";
-    DefCon::PrintLine(Cvt::ToString(s.endsWith(".xd")));
+    string s = "SOME.PACK";
+
+    if(s.toLower().endsWith(".pak")) {
+        DefCon::PrintLine("string is a pak");
+    }
+    else {
+        DefCon::PrintLine("packwatch failed rip bozo");
+    }
 }
 
 

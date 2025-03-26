@@ -85,7 +85,18 @@ public:
      * Checks whether this string ends with character ch.
      */
     bool endsWith(const char ch);
+    /**
+     * Checks whether this string ends with string str.
+     */
     bool endsWith(const string& str);
+    /**
+     * Creates a copy of the string with all characters being lowercase.
+     */
+    string toLower();
+    /**
+     * Creates a copy of the string with all characters being uppercase.
+     */
+    string toUpper();
 
     /**
      * Loops through the char* and counts the amount of characters.
