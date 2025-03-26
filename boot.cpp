@@ -1,5 +1,5 @@
-#include "string.h"
-#include "array.h"
+#include "deflib/data/string.h"
+#include "deflib/collections/array.h"
 
 #include "main.h"
 
@@ -12,6 +12,6 @@ int main(int argc, char **argv) {
     for(int i=1;i<argc;i++) {
         args[i-1] = argv[i];
     }
-    Main(args);
+    Program::Main(args);
     return 0;
 }

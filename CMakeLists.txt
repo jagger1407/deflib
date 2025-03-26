@@ -2,26 +2,28 @@ cmake_minimum_required(VERSION 3.0)
 
 project(deflib)
 
-set(deflib_SRC
-    types.h
+set(deflib_INC
+    deflib/types.h
+    deflib/deflib.h
 
-    string.h
-    string.cpp
+    deflib/data/string.h
+    deflib/data/string.cpp
 
-    array.h
+    deflib/collections/array.h
 
-    boot.cpp
+    deflib/io/defcon.h
+    deflib/io/defcon.cpp
 
-    defcon.h
-    defcon.cpp
-
-    cvt.h
-    cvt.cpp
-
-    main.cpp
-    main.h
+    deflib/cvt.h
+    deflib/cvt.cpp
 )
 
-add_executable(deflib ${deflib_SRC})
+set(deflib_SRC
+    main.cpp
+    main.h
+    boot.cpp
+)
+
+add_executable(deflib ${deflib_SRC} ${deflib_INC})
 
 install(TARGETS deflib RUNTIME DESTINATION bin)
