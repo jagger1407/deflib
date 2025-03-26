@@ -76,11 +76,16 @@ public:
      * Checks whether this string starts with character ch.
      */
     bool startsWith(const char ch);
+    /**
+     * Checks whether this string starts with string str.
+     */
+    bool startsWith(const string& str);
 
     /**
      * Checks whether this string ends with character ch.
      */
     bool endsWith(const char ch);
+    bool endsWith(const string& str);
 
     /**
      * Loops through the char* and counts the amount of characters.
@@ -93,8 +98,18 @@ public:
      *  @note Does not stop when encountering a null terminator.
      */
     static char* ncopy(char* dest, const char* src, u32 n);
-
-    static int compare(const char* str1, const char* str2);
+    /**
+     * Compares 2 strings.
+     * Returns 0 if both are equal, non-0 if not.
+     * Essentially just a custom strcmp().
+     */
+    static int comp(const char* str1, const char* str2);
+    /**
+     * Compares the first n chars of a string.
+     * Returns 0 if both are equal, non-0 if not.
+     * Essentially just a custom strncmp().
+     */
+    static int ncomp(const char* str1, const char* str2, u32 n);
 private:
     u32 _len;
     char* _c_ptr;
