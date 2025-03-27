@@ -70,7 +70,14 @@ string Cvt::ToString(u64 value) {
     return out;
 }
 string Cvt::ToString(Array<u8> array) {
-    return string((char*)array.ptr());
+    u64 len = array.count();
+
+    Array<char> charr = Array<char>(len);
+    copy_mem(charr.ptr(), array.ptr(), len);
+    string s;
+    s = charr;
+
+    return s;
 }
 
 

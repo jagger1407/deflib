@@ -48,25 +48,33 @@ public:
     static string ToString(u64 value);
     /**
      * Converts a ByteArray/Array<u8> into a string.
-     * @note assumes null termination.
+     * @note assumes bytes are valid characters.
+     * non-valid trailing characters are ignored.
      */
     static string ToString(Array<u8> array);
 
     /**
      * Converts a string into a char/s8.
      * @note string format must be a number, i.e. "120"
+     * non-valid trailing characters are ignored.
      */
     static s8 ToInt8(const string& str);
     /**
      * Converts a string into a short/s16.
+     * @note string format must be a number, i.e. "120"
+     * non-valid trailing characters are ignored.
      */
     static s16 ToInt16(const string& str);
     /**
      * Converts a string into an int/s32.
+     * @note string format must be a number, i.e. "120"
+     * non-valid trailing characters are ignored.
      */
     static s32 ToInt32(const string& str);
     /**
      * Converts a string into a longlong/s64.
+     * @note string format must be a number, i.e. "120"
+     * non-valid trailing characters are ignored.
      */
     static s64 ToInt64(const string& str);
 private:

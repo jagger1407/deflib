@@ -34,5 +34,6 @@ typedef u8 byte;
 
 #define NULL ((void*)0x0)
 
+typedef bool boolean;
 
 #endif // TYPES_H

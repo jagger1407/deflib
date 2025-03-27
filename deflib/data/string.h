@@ -53,6 +53,7 @@ public:
 
     string& operator=(const char* str);
     string& operator=(const string& str);
+    string& operator=(const Array<char> char_array);
 
     friend string operator+(const string& left, const char* right);
     friend string operator+(const char* left, const string& right);
@@ -117,6 +118,10 @@ public:
      * as an int array containing the index of each occurrence.
      */
     Array<int> getOccurrences(const string& str);
+    string replace(const char og, const char ch);
+    string replace(const char og, const string& str);
+    string replace(const string& og, const char ch);
+    string replace(const string& og, const string str);
     /**
      * Splits a string using char ch as a seperator.
      */
@@ -135,19 +140,19 @@ public:
      * Loops through the char* and counts the amount of characters.
      *  Essentially a custom strlen().
      */
-    static u32 len(const char* str);
+    static u32 Len(const char* str);
     /**
      * Compares 2 strings.
      * Returns 0 if both are equal, non-0 if not.
      * Essentially just a custom strcmp().
      */
-    static int compare(const char* str1, const char* str2);
+    static int Compare(const char* str1, const char* str2);
     /**
      * Compares the first n chars of a string.
      * Returns 0 if both are equal, non-0 if not.
      * Essentially just a custom strncmp().
      */
-    static int compare_n(const char* str1, const char* str2, u32 n);
+    static int Compare_n(const char* str1, const char* str2, u32 n);
 private:
     u32 _len;
     char* _c_ptr;
