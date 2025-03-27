@@ -20,7 +20,7 @@ static void * copy_mem(void* dest, const void* src, u64 n) {
     return dest;
 }
 /**
- *
+ * Fills n bytes of dest with given byte.
  */
 static void * fill_mem(void* dest, u8 byte, u64 n) {
     u8* ptr = (u8*)dest;
@@ -63,9 +63,8 @@ public:
         while(_arrptr = (T*)malloc(arr._count * sizeof(T)), _arrptr == NULL);
         _cur = _arrptr;
         _count = arr._count;
-        for(int i=0;i<_count;i++) {
-            _arrptr[i] = arr._arrptr[i];
-        }
+        fill_mem(_arrptr, 0x00, _count * sizeof(T));
+        Copy_n(_arrptr, arr._cur, _count);
     }
     /**
      * Creates an array by wrapping around an existing C-Style array.
@@ -150,11 +149,29 @@ public:
      * Returns the total size of this array in Bytes.
      */
     u64 size() { return _count * sizeof(T); }
+    /**
+     * Fills array with 0x00 Bytes.
+     * Returns the total amount of elements cleared.
+     */
+    u64 clear() {
+        if(_arrptr == NULL || _count == 0) {
+            return 0;
+        }
+        _cur = _arrptr;
+        fill_mem(_cur, 0x00, _count * sizeof(T));
+        return _count;
+    }
+    /**
+     * Resets the current array pointer to the inital allocation position.
+     */
+    void reset_ptr() {
+        _cur = _arrptr;
+    }
 
     /**
     *  Copies n elements from dest to src.
     */
-    static T* ncopy(T* dest, const T* src, u32 n) {
+    static T* Copy_n(T* dest, const T* src, u32 n) {
         for(int i=0;i<n;i++) {
             dest[i] = src[i];
         }
@@ -165,9 +182,9 @@ public:
      * If dest < src, copy until dest full
      * If dest > src, copy until src fully copied
      */
-    static Array<T>& copy(Array<T>& dest, const Array<T>& src) {
+    static Array<T>& Copy(Array<T>& dest, const Array<T>& src) {
         if(dest._cur == NULL || src._cur == NULL) {
-            return NULL;
+            return dest;
         }
         u64 n = dest._count < src._count ? dest._count : src._count;
         for(int i=0;i<n;i++) {

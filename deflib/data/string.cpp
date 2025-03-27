@@ -1,6 +1,6 @@
 #include "string.h"
 
-u32 string::len(const char* str) {
+u32 string::Len(const char* str) {
     u32 len = 0;
     if(str == NULL) {
         _prev_len = len;
@@ -19,7 +19,7 @@ u32 string::len(const char* str) {
     return len;
 }
 
-int string::compare(const char* str1, const char* str2) {
+int string::Compare(const char* str1, const char* str2) {
     if(str1 == str2) {
         return 0;
     }
@@ -33,7 +33,7 @@ int string::compare(const char* str1, const char* str2) {
     return *s1 - *s2;
 }
 
-int string::compare_n(const char* str1, const char* str2, u32 n) {
+int string::Compare_n(const char* str1, const char* str2, u32 n) {
     if(str1 == str2) {
         return 0;
     }
@@ -67,6 +67,7 @@ char * string::inclen(u32 length) {
     char* new_alloc = NULL;
     while(new_alloc = (char*)realloc(_c_ptr, l), new_alloc == NULL);
     _c_ptr = new_alloc;
+    _cur = _c_ptr;
     _real_len = l;
     for(int i=_len;i<l;i++) {
         _c_ptr[i] = 0x00;
@@ -85,7 +86,7 @@ char * string::c_str() const {
 
 
 string & string::operator=(const char* str) {
-    _len = len(str);
+    _len = Len(str);
 
     if(_c_ptr != NULL) {
         free(_c_ptr);
@@ -118,16 +119,39 @@ string & string::operator=(const string& str) {
 
     return *this;
 }
+string & string::operator=(const Array<char> char_array) {
+    Array<char> arr = (Array<char>)char_array;
+    if(_c_ptr == arr.ptr()) {
+        return *this;
+    }
+    if(_c_ptr != NULL) {
+        free(_c_ptr);
+    }
+    u64 len = arr.count();
+    if(arr[len-1] != 0x00) {
+        _c_ptr = initptr(len+1);
+        _real_len = len+1;
+    }
+    else {
+        _c_ptr = initptr(len);
+        _real_len = len;
+    }
+    _cur = _c_ptr;
+    _len = len;
+    copy_mem(_c_ptr, arr.ptr(), len);
+
+    return *this;
+}
 
 bool string::operator==(const string& str) {
-    return compare(_cur, str._cur) == 0;
+    return Compare(_cur, str._cur) == 0;
 }
 
 string & string::operator+=(const char* str) {
     if(str == NULL) {
         return *this;
     }
-    u32 l = len(str);
+    u32 l = Len(str);
     if(l <= 0) {
         return *this;
     }
@@ -148,7 +172,7 @@ string & string::operator+=(const string& str) {
 }
 string & string::operator+=(const char ch) {
     if(_real_len <= _len + 2) {
-        inclen(INC_STEP);
+        inclen(1);
     }
     _cur[_len] = ch;
     _len++;
@@ -173,7 +197,7 @@ string operator+(const string& left, const string& right) {
 string operator+(const string& left, const char right) {
     string s(left);
     if(left._real_len <= left._len + 2) {
-        s.inclen(INC_STEP);
+        s.inclen(1);
     }
     s._cur[s._len] = right;
     s._len++;
@@ -182,7 +206,7 @@ string operator+(const string& left, const char right) {
 string operator+(const char left, const string& right) {
     string s(right);
     if(right._real_len <= right._len + 2) {
-        s.inclen(INC_STEP);
+        s.inclen(1);
     }
     copy_mem(s._cur+1, right._cur, s._len);
     s._cur[0] = left;
@@ -220,7 +244,7 @@ bool string::startsWith(const string& str) {
     if(str._len == 1) {
         return startsWith(*str._cur);
     }
-    return compare_n(_cur, str._cur, str._len) == 0;
+    return Compare_n(_cur, str._cur, str._len) == 0;
 }
 
 bool string::endsWith(const char ch) {
@@ -237,7 +261,7 @@ bool string::endsWith(const string& str) {
     if(idx < 0) {
         return false;
     }
-    return compare_n(_cur + idx, str._cur, str._len) == 0;
+    return Compare_n(_cur + idx, str._cur, str._len) == 0;
 }
 
 string string::toLower() {
@@ -284,7 +308,7 @@ int string::countOccurrences(const string& str) {
     int cnt = 0;
     for(int i=0;i<_len;i++) {
         if(_cur[i] == splstr[0]) {
-            if(compare_n(_cur + i, splstr, str._len) == 0) {
+            if(Compare_n(_cur + i, splstr, str._len) == 0) {
                 cnt++;
             }
         }
@@ -324,7 +348,7 @@ Array<int> string::getOccurrences(const string& str) {
     int oc = 0;
     for(int i=0;i<_len;i++) {
         if(_cur[i] == splstr[0]) {
-            if(compare_n(_cur + i, splstr, str._len) == 0) {
+            if(Compare_n(_cur + i, splstr, str._len) == 0) {
                 arr[oc] = i;
                 oc++;
             }
@@ -333,6 +357,52 @@ Array<int> string::getOccurrences(const string& str) {
 
     return arr;
 }
+string string::replace(const char og, const char ch) {
+    if(_c_ptr == NULL || _cur == NULL) {
+        return string();
+    }
+    string s(*this);
+    for(int i=0;i<s._len;i++) {
+        if(_cur[i] == og) {
+            _cur[i] = ch;
+        }
+    }
+    return s;
+}
+string string::replace(const char og, const string& str) {
+    if(_c_ptr == NULL || _cur == NULL) {
+        return string();
+    }
+    Array<string> sections = split(og);
+    string s = sections[0];
+    for(int i=1;i<sections.count();i++) {
+        s += str + sections[i];
+    }
+    return s;
+}
+string string::replace(const string& og, const char ch) {
+    if(_c_ptr == NULL || _cur == NULL) {
+        return string();
+    }
+    Array<string> sections = split(og);
+    string s = sections[0];
+    for(int i=1;i<sections.count();i++) {
+        s += ch + sections[i];
+    }
+    return s;
+}
+string string::replace(const string& og, const string str) {
+    if(_c_ptr == NULL || _cur == NULL) {
+        return string();
+    }
+    Array<string> sections = split(og);
+    string s = sections[0];
+    for(int i=1;i<sections.count();i++) {
+        s += str + sections[i];
+    }
+    return s;
+}
+
 
 Array<string> string::split(const char ch) {
     if(_c_ptr == NULL || _cur == NULL) {
@@ -343,6 +413,7 @@ Array<string> string::split(const char ch) {
     int occlen = occ.length();
     int arrlen = occlen + 1;
     Array<string> arr(arrlen);
+    arr.clear();
     if(occlen == 0) {
         arr[0] = *this;
         return arr;
@@ -371,9 +442,10 @@ Array<string> string::split(const string& str) {
 
     string s(*this);
     Array<int> occ = getOccurrences(str);
-    int occlen = occ.length();
+   int occlen = occ.length();
     int arrlen = occlen + 1;
     Array<string> arr(arrlen);
+    arr.clear();
     if(occlen == 0) {
         arr[0] = *this;
         return arr;
@@ -387,6 +459,7 @@ Array<string> string::split(const string& str) {
         start = occ[i];
     }
     start += str._len;
+
     arr[arrlen-1] = string(_len - (occ[occlen-1] + str._len) + 1);
     copy_mem(arr[arrlen-1]._cur, _cur + start, arr[arrlen-1]._real_len);
     arr[arrlen-1]._len = _len - occ[occlen-1];
@@ -415,7 +488,7 @@ string::string() {
 
 
 string::string(const char* str) {
-    _len = len(str);
+    _len = Len(str);
     _c_ptr = initptr(_len+1);
     _real_len = _len + 1;
     _cur = _c_ptr;
