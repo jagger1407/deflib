@@ -493,7 +493,7 @@ string string::substring(u32 start) {
     s._len = new_size;
     return s;
 }
-string string::format(const string& fmt, ...) {
+string string::Format(const string& fmt, ...) {
     string s = "";
     if(s == fmt || fmt._len == 0) {
         return s;
