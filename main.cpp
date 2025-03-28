@@ -3,7 +3,7 @@
 
 void Program::Main(StringArray args) {
 
-    File f("../../../../Documents/test.txt", File::OpenMode::Read, false);
+    File f(args[0], File::OpenMode::Read, false);
     if(!f.isOpen()) {
         DefCon::PrintLine("Opening File failed.");
         return;

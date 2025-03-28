@@ -196,21 +196,16 @@ string operator+(const string& left, const string& right) {
 }
 string operator+(const string& left, const char right) {
     string s(left);
-    if(left._real_len <= left._len + 2) {
-        s.inclen(1);
-    }
+    s.inclen(1);
     s._cur[s._len] = right;
     s._len++;
     return s;
 }
 string operator+(const char left, const string& right) {
-    string s(right);
-    if(right._real_len <= right._len + 2) {
-        s.inclen(1);
-    }
-    copy_mem(s._cur+1, right._cur, s._len);
-    s._cur[0] = left;
-    s._len++;
+    string s(right._len + 2);
+    *s._cur = left;
+    copy_mem(s._cur+1, right._cur, right._len);
+    s._len = right._len + 1;
     return s;
 }
 
@@ -420,15 +415,15 @@ Array<string> string::split(const char ch) {
     }
     int start = -1;
     for(int i=0;i<occlen;i++) {
+        arr[i] = string(occ[i] - start);
         start++;
-        arr[i] = string(occ[i] - start + 1);
         copy_mem(arr[i]._cur, _cur + start, occ[i] - start);
         arr[i]._len = occ[i] - start;
         start = occ[i];
     }
     arr[arrlen-1] = string(_len - occ[occlen-1]);
     copy_mem(arr[arrlen-1]._cur, _cur + start + 1, arr[arrlen-1]._real_len);
-    arr[arrlen-1]._len = _len - occ[occlen-1];
+    arr[arrlen-1]._len = _len - occ[occlen-1] - 1;
 
     return arr;
 }
@@ -460,6 +455,11 @@ Array<string> string::split(const string& str) {
     }
     start += str._len;
 
+    if(occ[occlen-1] == _len - str._len) {
+        arr[arrlen-1] = "";
+        arr[arrlen-1]._len = 0;
+        return arr;
+    }
     arr[arrlen-1] = string(_len - (occ[occlen-1] + str._len) + 1);
     copy_mem(arr[arrlen-1]._cur, _cur + start, arr[arrlen-1]._real_len);
     arr[arrlen-1]._len = _len - occ[occlen-1];
@@ -476,6 +476,16 @@ string string::substring(u32 start, u32 n) {
     string s(n+1);
     copy_mem(s._cur, _cur + start, n);
     s._len = n;
+    return s;
+}
+string string::substring(u32 start) {
+    if(_c_ptr == NULL || _cur == NULL || _len <= 0) {
+        return string();
+    }
+    u32 new_size = _len - start;
+    string s(new_size + 1);
+    copy_mem(s._cur, _cur + start, new_size);
+    s._len = new_size;
     return s;
 }
 
