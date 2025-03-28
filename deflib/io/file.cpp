@@ -286,7 +286,10 @@ void File::writeChar(char value) {
     if(_fp == NULL || !initialized || _mode == Read) {
         return;
     }
-    fputc(value, _fp);
+    s32 written = fputc(value, _fp);
+    if(written != (s32)value) {
+        return;
+    }
     _pos++;
     _fsize++;
 }
@@ -297,7 +300,9 @@ void File::writeShort(s16 value) {
     if(_fp == NULL || !initialized || _mode == Read) {
         return;
     }
-    fwrite(&value, sizeof(s16), 1, _fp);
+    if(fwrite(&value, sizeof(s16), 1, _fp) < 1) {
+        return;
+    }
     _pos += sizeof(s16);
     _fsize += sizeof(s16);
 }
@@ -308,7 +313,9 @@ void File::writeInt(s32 value) {
     if(_fp == NULL || !initialized || _mode == Read) {
         return;
     }
-    fwrite(&value, sizeof(s32), 1, _fp);
+    if(fwrite(&value, sizeof(s32), 1, _fp) < 1) {
+        return;
+    }
     _pos += sizeof(s32);
     _fsize += sizeof(s32);
 }
@@ -319,7 +326,9 @@ void File::writeLong(s64 value) {
     if(_fp == NULL || !initialized || _mode == Read) {
         return;
     }
-    fwrite(&value, sizeof(s64), 1, _fp);
+    if(fwrite(&value, sizeof(s64), 1, _fp) < 1) {
+        return;
+    }
     _pos += sizeof(s64);
     _fsize += sizeof(s64);
 }
@@ -330,11 +339,26 @@ void File::writeFloat(f32 value) {
     if(_fp == NULL || !initialized || _mode == Read) {
         return;
     }
-    fwrite(&value, sizeof(f32), 1, _fp);
+    if(fwrite(&value, sizeof(f32), 1, _fp) < 1) {
+        return;
+    }
     _pos += sizeof(f32);
     _fsize += sizeof(f32);
 }
-
+void File::writeDouble(f64 value) {
+    if(_fp == NULL || !initialized || _mode == Read) {
+        return;
+    }
+    if(fwrite(&value, sizeof(f64), 1, _fp) < 1) {
+        return;
+    }
+    _pos += sizeof(f64);
+    _fsize += sizeof(f64);
+}
+void File::writeLine(string line) {
+    write(line.charArray().reinterpret<u8>(), line.length());
+    return;
+}
 
 void File::initPaths(const string& path) {
     _path = string(path);
