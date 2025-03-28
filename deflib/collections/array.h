@@ -49,7 +49,7 @@ public:
     /**
      * Creates an array the size of num_el.
      */
-    Array<T>(u32 num_el) {
+    Array<T>(u64 num_el) {
         _arrptr = NULL;
         while(_arrptr = (T*)malloc(num_el * sizeof(T)), _arrptr == NULL);
         _cur = _arrptr;
@@ -67,10 +67,21 @@ public:
         Copy_n(_arrptr, arr._cur, _count);
     }
     /**
+     * Casts an array to another type.
+     * @note if the passed array size doesn't align with the new type,
+     * the last element will be discarded.
+     */
+    template<typename O>
+    Array<T>(const Array<O>& arr) {
+        _arrptr = (T*)arr._arrptr;
+        _cur = (T*)arr._cur;
+        _count = (arr._count * sizeof(O)) / sizeof(T);
+    }
+    /**
      * Creates an array by wrapping around an existing C-Style array.
      * @note ptr should already be allocated via malloc/calloc.
      */
-    Array<T>(u32 size, const T* ptr) {
+    Array<T>(u64 size, const T* ptr) {
         _arrptr = ptr;
         _cur = ptr;
         _count = size;
@@ -98,12 +109,12 @@ public:
         }
     }
 
-    Array<T> operator+(s32 add) {
+    Array<T> operator+(s64 add) {
         Array<T> arr = Array<T>(_count, _cur);
         arr += add;
         return arr;
     }
-    Array<T> operator-(s32 sub) {
+    Array<T> operator-(s64 sub) {
         Array<T> arr = Array<T>(_count, _cur);
         arr -= sub;
         return arr;
@@ -116,11 +127,11 @@ public:
         _cur--;
         return *this;
     }
-    Array<T>& operator +=(s32 increase) {
+    Array<T>& operator +=(s64 increase) {
         _cur += increase;
         return *this;
     }
-    Array<T>& operator -=(s32 decrease) {
+    Array<T>& operator -=(s64 decrease) {
         _cur -= decrease;
         return *this;
     }
@@ -166,6 +177,17 @@ public:
      */
     void reset_ptr() {
         _cur = _arrptr;
+    }
+
+    /**
+     * Creates a copy of the array and converts each element to the new type.
+     */
+    template<typename O>
+    Array<O> convert() {
+        Array<O> new_arr(_count);
+        for(int i=0;i<_count;i++) {
+            new_arr[i] = (O)_cur[i];
+        }
     }
 
     /**
