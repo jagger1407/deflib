@@ -250,7 +250,6 @@ private:
     T* _arrptr;
     T* _cur;
     u64 _count;
-    bool wrap = false;
 };
 
 #endif // ARRAY_H
