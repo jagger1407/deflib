@@ -87,7 +87,8 @@ u64 File::pos() {
 }
 
 string File::location() {
-    return _path_full.replace(PATH_SEPERATOR + _fname, "");
+    string test = _path_full.replace(PATH_SEPERATOR + _fname, "");
+    return test;
 }
 string File::path() {
     return _path;
@@ -232,24 +233,40 @@ string File::readLine() {
 
 void File::initPaths(const string& path) {
     _path = string(path);
+    _path_full = "";
     Array<string> dirs_path = _path.split(PATH_SEPERATOR);
-    int curpath = dirs_path.count() - 2;
-    _fname = dirs_path[curpath+1];
+    int curpath = dirs_path.count() - 1;
+    _fname = dirs_path[curpath];
 
     char* tmp = (char*)malloc(PATH_MAX);
     realpath(".", tmp);
     string cwd = string(tmp);
-    cwd += PATH_SEPERATOR + _fname;
     free(tmp);
-    Array<string> dirs_cwd = cwd.split(PATH_SEPERATOR);
-    int curcwd = dirs_cwd.count() - 2;
-
-    _path_full = _fname;
-    if(curpath == 0) {
-        _path_full = cwd;
+    if(_path.startsWith(string(".") + PATH_SEPERATOR)) {
+        _path_full = cwd + PATH_SEPERATOR + _path.substring(2);
         return;
     }
+    if(curpath <= 0) {
+        _path_full = cwd + PATH_SEPERATOR + _fname;
+        return;
+    }
+    Array<string> dirs_cwd = cwd.split(PATH_SEPERATOR);
+    int updirs =  _path.countOccurrences(string("..") + PATH_SEPERATOR);
+    if(updirs <= 0) {
+        _path_full = _path;
+        return;
+    }
+    int cwddir = dirs_cwd.count() - updirs;
+    int pathdir = dirs_path.count() - updirs;
 
+    for(int i=0;i<cwddir;i++) {
+        _path_full += dirs_cwd[i] + PATH_SEPERATOR;
+    }
+    string path_tmp(dirs_path[curpath--]);
+    for(int i=curpath; i >= updirs;i--) {
+        path_tmp = dirs_path[i] + PATH_SEPERATOR + path_tmp;
+    }
+    _path_full += path_tmp;
 }
 
 

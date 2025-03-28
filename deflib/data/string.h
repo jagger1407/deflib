@@ -135,6 +135,10 @@ public:
      * Copies n characters of this string into another string starting at index start.
      */
     string substring(u32 start, u32 n);
+    /**
+     * Copies part of this string starting at index start until the end.
+     */
+    string substring(u32 start);
 
     /**
      * Loops through the char* and counts the amount of characters.
