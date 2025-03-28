@@ -356,6 +356,7 @@ void File::writeDouble(f64 value) {
     _fsize += sizeof(f64);
 }
 void File::writeLine(string line) {
+    line += '\n';
     write(line.charArray().reinterpret<u8>(), line.length());
     return;
 }
