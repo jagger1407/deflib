@@ -3,14 +3,21 @@
 
 void Program::Main(StringArray args) {
 
-    ByteArray ba = { 0x00, 0x00, 0x80, 0x3F };
+    File f(args[0], File::OpenMode::ReadWrite, false);
+    if(!f.isOpen()) {
+        DefCon::PrintLine("Opening file failed!");
+        return;
+    }
 
-    DefCon::Printf("C-Style cast to convert: %.1f\n", ((Array<float>)ba)[2]);
-    DefCon::Printf("Method to reinterpret (copies the array): %.1f\n", ba.reinterpretCopy<float>()[0]);
+    f.seek(0, SEEK_END);
+    f.writeLine("\nTesting");
+    f.seek(0, SEEK_SET);
 
-    FloatArray fa = ba.reinterpret<float>();
+    StringArray lines = Cvt::ToString(f.readFile()).split('\n');
 
-    DefCon::Printf("Method to reinterpret (doesn't copy): %.1f\n", fa[0]);
+    for(int i = 0; i < lines.count(); i++) {
+        DefCon::PrintLine(Cvt::ToString(i+1) + ": " + lines[i]);
+    }
 }
 
 
