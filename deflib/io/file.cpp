@@ -262,11 +262,7 @@ void File::initPaths(const string& path) {
     for(int i=0;i<cwddir;i++) {
         _path_full += dirs_cwd[i] + PATH_SEPERATOR;
     }
-    string path_tmp(dirs_path[curpath--]);
-    for(int i=curpath; i >= updirs;i--) {
-        path_tmp = dirs_path[i] + PATH_SEPERATOR + path_tmp;
-    }
-    _path_full += path_tmp;
+    _path_full += _path.replace("../", "");
 }
 
 
