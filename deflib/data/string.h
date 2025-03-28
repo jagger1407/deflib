@@ -50,6 +50,11 @@ public:
      * Returns the underlying C-Style String (char*).
      */
     char* c_str() const;
+    /**
+     * Returns a char array containing the string.
+     * @note includes all null bytes.
+     */
+    Array<char> charArray();
 
     string& operator=(const char* str);
     string& operator=(const string& str);
@@ -159,7 +164,7 @@ public:
     static int Compare_n(const char* str1, const char* str2, u32 n);
 private:
     u32 _len;
-    char* _c_ptr;
+    char* _c_str;
     char* _cur;
     u32 _real_len;
 
