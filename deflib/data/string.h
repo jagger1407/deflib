@@ -167,7 +167,7 @@ public:
     /**
      * Returns a string with the given format.
      */
-    static string format(const string& fmt, ...);
+    static string Format(const string& fmt, ...);
 private:
     u32 _len;
     char* _c_str;
