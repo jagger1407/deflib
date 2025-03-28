@@ -4,6 +4,8 @@
 #include "../types.h"
 #include "../collections/array.h"
 #include <stdlib.h>
+#include <stdio.h>
+#include <stdarg.h>
 
 
 // Arbitrarily chosen idk
@@ -162,6 +164,10 @@ public:
      * Essentially just a custom strncmp().
      */
     static int Compare_n(const char* str1, const char* str2, u32 n);
+    /**
+     * Returns a string with the given format.
+     */
+    static string format(const string& fmt, ...);
 private:
     u32 _len;
     char* _c_str;
