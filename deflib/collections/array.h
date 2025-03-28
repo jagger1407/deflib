@@ -194,8 +194,35 @@ public:
     /**
      * Resets the current array pointer to the inital allocation position.
      */
-    void reset_ptr() {
+    void resetPtr() {
         _cur = _arrptr;
+    }
+
+    /**
+     * Extracts elements of this array starting at index start to the end.
+     */
+    Array<T> subarray(u64 start)  {
+        if(start < 0 || start >= _count || _arrptr == NULL || _count <= 0) {
+            return Array<T>();
+        }
+        u64 cnt = _count - start;
+        Array<T> sub(cnt);
+        copy_mem(sub._arrptr, _cur + start, cnt);
+        return sub;
+    }
+    /**
+     * Extracts n elements of this array starting at index start.
+     */
+    Array<T> subarray(u64 start, u64 n) {
+        if(start < 0 || start >= _count || _arrptr == NULL || _count <= 0) {
+            return Array<T>();
+        }
+        if(n > _count - start) {
+            n = _count - start;
+        }
+        Array<T> sub(n);
+        copy_mem(sub._arrptr, _cur + start, n * sizeof(T));
+        return sub;
     }
 
     /**
