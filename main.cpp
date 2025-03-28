@@ -3,18 +3,15 @@
 
 void Program::Main(StringArray args) {
 
-    File f(args[0], File::OpenMode::Read, false);
-    if(!f.isOpen()) {
-        DefCon::PrintLine("Opening File failed.");
-        return;
-    }
+    ByteArray ba = { 0x00, 0x00, 0x80, 0x3F };
 
-    DefCon::PrintLine("Filename: " + f.name());
-    DefCon::PrintLine("Given path: " + f.path());
-    DefCon::PrintLine("Full path: " + f.fullPath());
-    DefCon::PrintLine("Location: " + f.location());
-    DefCon::PrintLine("Contents: ");
-    DefCon::PrintLine(Cvt::ToString(f.readFile()));
+    DefCon::Printf("C-Style cast to convert: %.1f\n", ((Array<float>)ba)[2]);
+    DefCon::Printf("Method to reinterpret (copies the array): %.1f\n", ba.reinterpretCopy<float>()[0]);
+
+    FloatArray fa = ba.reinterpret<float>();
+
+    DefCon::Printf("Method to reinterpret (doesn't copy): %.1f\n", fa[0]);
 }
+
 
 

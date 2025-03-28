@@ -68,20 +68,27 @@ public:
     }
     /**
      * Casts an array to another type.
-     * @note if the passed array size doesn't align with the new type,
-     * the last element will be discarded.
+     * @note Each element will be converted to the new type.
      */
     template<typename O>
-    Array<T>(const Array<O>& arr) {
-        _arrptr = (T*)arr._arrptr;
-        _cur = (T*)arr._cur;
-        _count = (arr._count * sizeof(O)) / sizeof(T);
+    Array<T>(Array<O>& arr) {
+        O* p = arr.ptr();
+        u64 cnt = arr.count();
+
+        _arrptr = NULL;
+        while(_arrptr = (T*)malloc(cnt * sizeof(T)), _arrptr == NULL);
+        _cur = _arrptr;
+        _count = cnt;
+        fill_mem(_arrptr, 0x00, _count * sizeof(T));
+        for(int i=0;i<cnt;i++) {
+            _arrptr[i] = (T)p[i];
+        }
     }
     /**
      * Creates an array by wrapping around an existing C-Style array.
      * @note ptr should already be allocated via malloc/calloc.
      */
-    Array<T>(u64 size, const T* ptr) {
+    Array<T>(u64 size, T* ptr) {
         _arrptr = ptr;
         _cur = ptr;
         _count = size;
@@ -144,6 +151,18 @@ public:
     T& operator*() {
         return *_cur;
     }
+    Array<T>& operator=(Array<T> arr) {
+        if(_arrptr != NULL) {
+            free(_arrptr);
+        }
+        _arrptr = arr._arrptr;
+        _cur = _arrptr;
+        _count = arr._count;
+        arr._arrptr = NULL;
+        arr._cur = NULL;
+        arr._count = 0;
+        return *this;
+    }
     /**
      * Returns the underlying C-Style pointer (T*).
      */
@@ -180,14 +199,26 @@ public:
     }
 
     /**
-     * Creates a copy of the array and converts each element to the new type.
+     * Reinterprets an array to an array of another type.
+     * @note if the types aren't aligned, the last element will be discarded.
+     * Will invalidate previous pointer! Only use in assignments!
      */
     template<typename O>
-    Array<O> convert() {
-        Array<O> new_arr(_count);
-        for(int i=0;i<_count;i++) {
-            new_arr[i] = (O)_cur[i];
-        }
+    Array<O> reinterpret() {
+        Array<O> warr = Array<O>((_count * sizeof(T)) / sizeof(O), (O*)_cur);
+        _arrptr = NULL;
+        _cur = NULL;
+        return warr;
+    }
+    /**
+     * Copies an array and reinterprets its data to another type.
+     * @note if the types aren't aligned, the last element will be discarded.
+     */
+    template<typename O>
+    Array<O> reinterpretCopy() {
+        Array<O> new_arr((_count * sizeof(T)) / sizeof(O));
+        copy_mem(new_arr.ptr(), _cur, new_arr.count() * sizeof(O));
+        return new_arr;
     }
 
     /**
@@ -219,6 +250,7 @@ private:
     T* _arrptr;
     T* _cur;
     u64 _count;
+    bool wrap = false;
 };
 
 #endif // ARRAY_H
