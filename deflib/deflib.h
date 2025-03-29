@@ -5,6 +5,7 @@
 #include "cvt.h"
 
 #include "data/string.h"
+#include "data/time.h"
 
 #include "collections/array.h"
 typedef Array<string> StringArray;
