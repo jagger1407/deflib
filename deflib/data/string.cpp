@@ -467,7 +467,7 @@ Array<string> string::split(const string& str) {
     }
     arr[arrlen-1] = string(_len - (occ[occlen-1] + str._len) + 1);
     copy_mem(arr[arrlen-1]._cur, _cur + start, arr[arrlen-1]._real_len);
-    arr[arrlen-1]._len = _len - occ[occlen-1];
+    arr[arrlen-1]._len = arr[arrlen-1]._real_len - 1;
 
     return arr;
 }

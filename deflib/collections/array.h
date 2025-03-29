@@ -142,7 +142,7 @@ public:
         _cur -= decrease;
         return *this;
     }
-    T& operator[](u32 index) {
+    T& operator[](u32 index) const {
         if(index < 0 || index >= _count) {
             raise(SIGSEGV);
         }

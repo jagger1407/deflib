@@ -377,7 +377,7 @@ void File::initPaths(const string& path) {
         return;
     }
     if(curpath <= 0) {
-        _path_full = cwd + PATH_SEPERATOR + _fname;
+        _path_full = cwd + PATH_SEPERATOR + _path;
         return;
     }
     Array<string> dirs_cwd = cwd.split(PATH_SEPERATOR);

@@ -2,6 +2,7 @@
 #define CVT_H
 
 #include "data/string.h"
+#include "data/time.h"
 #include "collections/array.h"
 
 /**
@@ -46,6 +47,14 @@ public:
      * Converts a ulonglong/u64 value into a string.
      */
     static string ToString(u64 value);
+    /**
+     * Creates a string from a time object using asctime().
+     */
+    static string ToString(Time& value);
+    /**
+     * Creates a string from a time object with the given format.
+     */
+    static string ToString(Time& value, const string& format);
     /**
      * Converts a ByteArray/Array<u8> into a string.
      * @note assumes bytes are valid characters.

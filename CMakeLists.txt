@@ -8,6 +8,8 @@ set(deflib_INC
 
     deflib/data/string.h
     deflib/data/string.cpp
+    deflib/data/time.h
+    deflib/data/time.cpp
 
     deflib/collections/array.h
 
