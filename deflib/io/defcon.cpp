@@ -1,5 +1,8 @@
 #include "defcon.h"
 
+void DefCon::PrintLine() {
+    puts("");
+}
 void DefCon::PrintLine(const string& str) {
     puts(str.c_str());
 }

@@ -20,6 +20,7 @@ typedef Array<u32> UInt32Array;
 typedef Array<u64> UInt64Array;
 typedef Array<f32> FloatArray;
 typedef Array<f64> DoubleArray;
+#include "collections/arraylist.h"
 
 #include "io/defcon.h"
 #include "io/file.h"

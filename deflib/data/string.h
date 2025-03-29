@@ -7,13 +7,6 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-
-// Arbitrarily chosen idk
-// If the operator + or +/ is called with a char,
-// This is the amount of space that the array length will be increased by.
-// This way, realloc() will only be called every 20th appendage ideally.
-#define INC_STEP 20
-
 /**
  * String Class
  * wrapper class for a char array, but with swag yk
@@ -40,6 +33,10 @@ public:
      */
     string(u32 initial_size);
     /**
+     * Creates a string object by copying a char array.
+     */
+    string(Array<char>& char_array);
+    /**
      * Destructor.
      */
     ~string();
@@ -53,7 +50,7 @@ public:
      */
     char* c_str() const;
     /**
-     * Returns a char array containing the string.
+     * Copies the contents of the string into a char array.
      * @note includes all null bytes.
      */
     Array<char> charArray();

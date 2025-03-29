@@ -79,6 +79,65 @@ string Cvt::ToString(Array<u8> array) {
 
     return s;
 }
+string Cvt::ToString(Array<char> array) {
+    return string(array);
+}
+string Cvt::ToString(ArrayList<char> list) {
+    Array<char> charr = list.copyToArray();
+    return string(charr);
+}
+string Cvt::ToString(Array<char> array, char seperator) {
+    if(array.count() > 0) {
+        return string("");
+    }
+    string s = array[0];
+    for(int i=1;i<array.count();i++) {
+        s += seperator + array[i];
+    }
+    return s;
+}
+string Cvt::ToString(ArrayList<char> list, char seperator) {
+    return ToString(list.copyToArray(), seperator);
+}
+string Cvt::ToString(Array<char> array, string seperator) {
+    if(array.count() > 0) {
+        return string("");
+    }
+    string s = array[0];
+    for(int i=1;i<array.count();i++) {
+        s += seperator + array[i];
+    }
+    return s;
+}
+string Cvt::ToString(ArrayList<char> list, string seperator) {
+    return ToString(list.copyToArray(), seperator);
+}
+string Cvt::ToString(Array<string> array, char seperator) {
+    if(array.count() > 0) {
+        return string("");
+    }
+    string s = array[0];
+    for(int i=1;i<array.count();i++) {
+        s += seperator + array[i];
+    }
+    return s;
+}
+string Cvt::ToString(ArrayList<string> list, char seperator) {
+    return ToString(list.copyToArray(), seperator);
+}
+string Cvt::ToString(Array<string> array, string seperator) {
+    if(array.count() <= 0) {
+        return string("");
+    }
+    string s = array[0];
+    for(int i=1;i<array.count();i++) {
+        s += seperator + array[i];
+    }
+    return s;
+}
+string Cvt::ToString(ArrayList<string> list, string seperator) {
+    return ToString(list.copyToArray(), seperator);
+}
 string Cvt::ToString(Time& value) {
     struct tm tm = value.tmStruct();
     return string(asctime(&tm));

@@ -13,6 +13,10 @@ class DefCon
 {
 public:
     /**
+     * Enters a new line in the console.
+     */
+    static void PrintLine();
+    /**
      * Prints str to the stdout console and enters a new line.
      */
     static void PrintLine(const string& str);
