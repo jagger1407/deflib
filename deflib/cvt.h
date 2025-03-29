@@ -4,6 +4,7 @@
 #include "data/string.h"
 #include "data/time.h"
 #include "collections/array.h"
+#include "collections/arraylist.h"
 
 /**
  * Conversion Class
@@ -61,6 +62,53 @@ public:
      * non-valid trailing characters are ignored.
      */
     static string ToString(Array<u8> array);
+    /**
+     * Converts a CharArray/Array<char> into a string.
+     * @note assumes bytes are valid characters.
+     * non-valid trailing characters are ignored.
+     */
+    static string ToString(Array<char> array);
+    /**
+     * Converts an ArrayList<char> into a string.
+     * @note non-valid trailing characters are ignored.
+     */
+    static string ToString(ArrayList<char> list);
+    /**
+     * Combines characters from an array into a string
+     * with a given seperator between each value.
+     */
+    static string ToString(Array<char> array, char seperator);
+    /**
+     * Combines characters from a list into a string
+     * with a given seperator between each value.
+     */
+    static string ToString(ArrayList<char> list, char seperator);
+    /**
+     * Combines characters from an array into a string
+     * with a given seperator between each value.
+     */
+    static string ToString(Array<char> array, string seperator);
+    /**
+     * Combines characters from a list into a string
+     * with a given seperator between each value.
+     */
+    static string ToString(ArrayList<char> list, string seperator);
+    /**
+     * Combines strings with a given seperator between each value.
+     */
+    static string ToString(Array<string> array, char seperator);
+    /**
+     * Combines strings with a given seperator between each value.
+     */
+    static string ToString(ArrayList<string> list, char seperator);
+    /**
+     * Combines strings with a given seperator between each value.
+     */
+    static string ToString(Array<string> array, string seperator);
+    /**
+     * Combines strings with a given seperator between each value.
+     */
+    static string ToString(ArrayList<string> list, string seperator);
 
     /**
      * Converts a string into a char/s8.

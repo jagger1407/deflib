@@ -61,7 +61,7 @@ public:
     Array<T>(const Array<T>& arr) {
         _arrptr = NULL;
         while(_arrptr = (T*)malloc(arr._count * sizeof(T)), _arrptr == NULL);
-        _cur = _arrptr;
+        _cur = _arrptr + (arr._cur - arr._arrptr);
         _count = arr._count;
         fill_mem(_arrptr, 0x00, _count * sizeof(T));
         Copy_n(_arrptr, arr._cur, _count);
@@ -117,22 +117,32 @@ public:
         }
     }
 
-    Array<T> operator+(s64 add) {
-        Array<T> arr = Array<T>(_count, _cur);
-        arr += add;
-        return arr;
+    friend Array<T> operator+(Array<T>& left, s64 right) {
+        return left.subarray(right);
     }
-    Array<T> operator-(s64 sub) {
-        Array<T> arr = Array<T>(_count, _cur);
-        arr -= sub;
-        return arr;
+    friend Array<T> operator+(s64 left, Array<T> right) {
+        return right.subarray(left);
+    }
+    friend Array<T> operator-(Array<T>& left, s64 right) {
+        return left.subarray(left._cur - left._arrptr - right);
+    }
+    friend Array<T> operator-(s64 left, Array<T>& right) {
+        return right.subarray(right._cur - right._arrptr - left);
     }
     Array<T>& operator++() {
         _cur++;
         return *this;
     }
+    Array<T>& operator++(int) {
+        _cur++;
+        return *this;
+    }
     Array<T>& operator--() {
         _cur--;
+        return *this;
+    }
+    Array<T>& operator--(int) {
+        _cur++;
         return *this;
     }
     Array<T>& operator +=(s64 increase) {
@@ -143,8 +153,8 @@ public:
         _cur -= decrease;
         return *this;
     }
-    T& operator[](u32 index) const {
-        if(index < 0 || index >= _count) {
+    T& operator[](s64 index) const {
+        if(_cur + index >= _arrptr + _count || _cur + index < _arrptr) {
             raise(SIGSEGV);
         }
         return _cur[index];
