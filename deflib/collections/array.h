@@ -218,7 +218,7 @@ public:
         }
         u64 cnt = _count - start;
         Array<T> sub(cnt);
-        copy_mem(sub._arrptr, _cur + start, cnt);
+        copy_mem(sub._arrptr, _cur + start, cnt * sizeof(T));
         return sub;
     }
     /**
@@ -234,6 +234,20 @@ public:
         Array<T> sub(n);
         copy_mem(sub._arrptr, _cur + start, n * sizeof(T));
         return sub;
+    }
+    /**
+     * Reverses the contents of the array.
+     * For all your endian needs.
+     */
+    Array<T> reverse() {
+        Array<T> arr(_count);
+        T* ptr = arr._cur;
+        for(u64 i = 0; i < _count / 2; i++) {
+            u64 right = _count - 1 - i;
+            T tmp = ptr[i];
+            ptr[i] = ptr[right];
+            ptr[right] = tmp;
+        }
     }
 
     /**

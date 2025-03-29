@@ -156,8 +156,11 @@ public:
      */
     template<typename O>
     ArrayList<O> reinterpretCopy() {
-        ArrayList<O> new_arr((_count * sizeof(T)) / sizeof(O));
-        Array<O>::Copy_n(new_arr.ptr(), _arrptr, new_arr.count());
+        u64 new_size = (_count * sizeof(T)) / sizeof(O);
+        ArrayList<O> new_arr(new_size);
+        for(int i=0;i<new_size;i++) {
+            new_arr.add(((O*)_arrptr)[i]);
+        }
         return new_arr;
     }
     /**
@@ -187,6 +190,47 @@ public:
         }
         return _arrptr[index];
     }
+    /**
+     * Reverses the contents of the array.
+     * For all your endian needs.
+     */
+    ArrayList<T> reverse() {
+        ArrayList<T> arr(_count);
+        T* ptr = arr._arrptr;
+        for(u64 i = 0; i < _count / 2; i++) {
+            u64 right = _count - 1 - i;
+            T tmp = ptr[i];
+            ptr[i] = ptr[right];
+            ptr[right] = tmp;
+        }
+    }
+    /**
+     * Extracts elements of this array starting at index start to the end.
+     */
+    ArrayList<T> subarray(u64 start)  {
+        if(start < 0 || start >= _count || _arrptr == NULL || _count <= 0) {
+            return ArrayList<T>();
+        }
+        u64 cnt = _count - start;
+        Array<T> sub(cnt);
+        copy_mem(sub._arrptr, _arrptr + start, cnt * sizeof(T));
+        return sub;
+    }
+    /**
+     * Extracts n elements of this array starting at index start.
+     */
+    ArrayList<T> subarray(u64 start, u64 n) {
+        if(start < 0 || start >= _count || _arrptr == NULL || _count <= 0) {
+            return ArrayList<T>();
+        }
+        if(n > _count - start) {
+            n = _count - start;
+        }
+        ArrayList<T> sub(n);
+        copy_mem(sub._arrptr, _arrptr + start, n * sizeof(T));
+        return sub;
+    }
+
     /**
      * Gets the total amount of elements in the list.
      * Same as length().
