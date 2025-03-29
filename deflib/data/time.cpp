@@ -7,22 +7,24 @@ Time::Time(u64 elapsed) {
 Time::Time(s32 day, s32 month, s32 year) {
     _tm = {0};
 
-    _tm.tm_year = year - 1900;
-    _tm.tm_mon = month - 1;
-    _tm.tm_mday = day;
+    if(year >= 0) _tm.tm_year = year - 1900;
+    if(month > 0 && month <= 12) _tm.tm_mon = month - 1;
+    if(day > 0 && day <= 31) _tm.tm_mday = day;
     _tm.tm_hour = 0;
     _tm.tm_min = 0;
     _tm.tm_sec = 0;
+    mktime(&_tm);
 }
 Time::Time(s32 day, s32 month, s32 year, s32 hours, s32 minutes, s32 seconds) {
     _tm = {0};
 
-    _tm.tm_year = year - 1900;
-    _tm.tm_mon = month - 1;
-    _tm.tm_mday = day;
+    if(year >= 0) _tm.tm_year = year - 1900;
+    if(month > 0 && month <= 12) _tm.tm_mon = month - 1;
+    if(day > 0 && day <= 31) _tm.tm_mday = day;
     _tm.tm_hour = hours;
     _tm.tm_min = minutes;
     _tm.tm_sec = seconds;
+    mktime(&_tm);
 }
 
 Time Time::Now() {

@@ -100,6 +100,7 @@ public:
      * TODO: Fucking get rid of stds entirely
      */
     Array<T>(std::initializer_list<T> list) : Array<T>(list.size()) {
+        fill_mem(_arrptr, 0x00, _count * sizeof(T));
         const T* ptr = list.begin();
         for(int i=0;i<list.size();i++) {
             _arrptr[i] = *ptr++;
