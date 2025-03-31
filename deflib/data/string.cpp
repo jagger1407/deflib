@@ -1,10 +1,27 @@
 #include "string.h"
 
+int vasprintf(char**strp, const char* fmt, va_list ap) {
+    s32 len = _vscprintf(fmt, ap);
+    if(len < 0) {
+        return len;
+    }
+    u32 size = len + 1;
+    char* str = (char*)NULL;
+    while(str = (char*)malloc(size), str == NULL);
+    int ret = vsprintf(str, fmt, ap);
+    if(ret < 0) {
+        free(str);
+        return ret;
+    }
+    *strp = str;
+    return ret;
+}
+
 u32 string::Len(const char* str) {
     u32 len = 0;
     if(str == NULL) {
         _prev_len = len;
-        _prev_ptr = NULL;
+        _prev_ptr = (char*)NULL;
         return len;
     }
     if(str == _prev_ptr) {
@@ -54,8 +71,8 @@ int string::Compare_n(const char* str1, const char* str2, u32 n) {
 }
 
 char * string::initptr(u32 len) {
-    char* ptr = NULL;
-    while(ptr = (char*)malloc(len), ptr == NULL);
+    char* ptr = (char*)NULL;
+    while(ptr = (char*)malloc(len), ptr == (char*)NULL);
     for(int i=0;i<len;i++) {
         ptr[i] = 0x00;
     }
@@ -64,7 +81,7 @@ char * string::initptr(u32 len) {
 
 char * string::inclen(u32 length) {
     u32 l = _len + length + 1;
-    char* new_alloc = NULL;
+    char* new_alloc = (char*)NULL;
     while(new_alloc = (char*)realloc(_c_str, l), new_alloc == NULL);
     _c_str = new_alloc;
     _cur = _c_str;
@@ -113,8 +130,8 @@ string & string::operator=(const string& str) {
     if(str._real_len <= 0) {
         _len = 0;
         _real_len = 0;
-        _c_str = NULL;
-        _cur = NULL;
+        _c_str = (char*)NULL;
+        _cur = (char*)NULL;
     }
     _len = str._len;
     _c_str = initptr(str._real_len);
@@ -406,7 +423,7 @@ string string::replace(const string& og, const string str) {
 
 Array<string> string::split(const char ch) {
     if(_c_str == NULL || _cur == NULL) {
-        return NULL;
+        return Array<string>();
     }
     string s(*this);
     Array<int> occ = getOccurrences(ch);
@@ -434,7 +451,7 @@ Array<string> string::split(const char ch) {
 }
 Array<string> string::split(const string& str) {
     if(_c_str == NULL || _cur == NULL ||  str._cur == NULL || str._len == 0 || _len == 0) {
-        return NULL;
+        return Array<string>();
     }
     if(str._len == 1) {
         return split(*str._cur);
@@ -512,8 +529,8 @@ string string::Format(const string& fmt, ...) {
 
 string::string() {
     _len = 0;
-    _c_str = NULL;
-    _cur = NULL;
+    _c_str = (char*)NULL;
+    _cur = (char*)NULL;
 }
 
 
@@ -553,7 +570,7 @@ string::string(Array<char>& char_array) {
 string::~string() {
     if(_c_str != NULL) {
         free(_c_str);
-        _c_str = NULL;
-        _cur = NULL;
+        _c_str = (char*)NULL;
+        _cur = (char*)NULL;
     }
 }
