@@ -1,17 +1,18 @@
 #include "file.h"
 
 File::File() {
-    initialized = false;
-    _fp = NULL;
-    _fname = NULL;
-    _path = NULL;
-    _path_full = NULL;
+    _initialized = false;
+    _fp = (FILE*)NULL;
+    _fname = "";
+    _path = "";
+    _path_full = "";
+    _binary = false;
     _fsize = 0;
     _pos = 0;
 }
 
 File::File(const string& path, OpenMode mode, bool binary) {
-    initialized = false;
+    _initialized = false;
     _mode = mode;
     string open_mode = _modes[mode];
     if(binary) {
@@ -19,13 +20,14 @@ File::File(const string& path, OpenMode mode, bool binary) {
     }
     _fp = fopen(path.c_str(), open_mode.c_str());
     if(_fp == NULL) {
-        _fname  = NULL;
-        _path = NULL;
-        _path_full = NULL;
+        _fname  = "";
+        _path = "";
+        _path_full = "";
         _fsize = 0;
         _pos = 0;
         return;
     }
+    _binary = binary;
 
     _pos = ftell(_fp);
     fseek(_fp, 0, SEEK_SET);
@@ -35,14 +37,14 @@ File::File(const string& path, OpenMode mode, bool binary) {
     fseek(_fp, _pos, SEEK_SET);
 
     initPaths(path);
-    initialized = true;
+    _initialized = true;
 }
 
 File::~File() {
     if(_fp != NULL) {
         fclose(_fp);
     }
-    _fp = NULL;
+    _fp = (FILE*)NULL;
 }
 
 u64 File::size() {
@@ -106,7 +108,7 @@ bool File::eof() {
     return _pos >= _fsize;
 }
 int File::open(const string& path, OpenMode mode, bool binary) {
-    if(_fp != NULL || initialized) {
+    if(_fp != NULL || _initialized) {
         return -1;
     }
     _mode = mode;
@@ -116,9 +118,9 @@ int File::open(const string& path, OpenMode mode, bool binary) {
     }
     _fp = fopen(path.c_str(), open_mode.c_str());
     if(_fp == NULL) {
-        _fname  = NULL;
-        _path = NULL;
-        _path_full = NULL;
+        _fname  = "";
+        _path = "";
+        _path_full = "";
         _fsize = 0;
         _pos = 0;
         return -2;
@@ -135,27 +137,40 @@ int File::open(const string& path, OpenMode mode, bool binary) {
     return 0;
 }
 void File::close() {
-    if(_fp == NULL || !initialized) {
+    if(_fp == NULL || !_initialized) {
         return;
     }
     fclose(_fp);
-    _fp = NULL;
-    _path = NULL;
-    _path_full = NULL;
+    _fp = (FILE*)NULL;
+    _path = "";
+    _path_full = "";
     _fsize = 0;
     _pos = 0;
-    initialized = false;
+    _initialized = false;
 }
 bool File::isOpen() {
-    return initialized;
+    return _initialized;
 }
 File::OpenMode File::mode() {
     return _mode;
 }
+File& File::operator=(File f) {
+    _fp = f._fp;
+    _path = f._path;
+    _path_full = f._path_full;
+    _fsize = f._fsize;
+    _pos = f._pos;
+    _initialized = f._initialized;
+    _mode = f._mode;
+    _binary = f._binary;
 
+    f._fp = (FILE*)NULL;
+
+    return *this;
+}
 
 u64 File::read(Array<u8>& buffer, u64 n) {
-    if(!initialized || _fp == NULL || _mode == Append || _mode == CreateWrite) {
+    if(!_initialized || _fp == NULL || _mode == Append || _mode == CreateWrite) {
         return 0;
     }
     u64 cnt = buffer.count();
@@ -170,7 +185,7 @@ u64 File::read(Array<u8>& buffer, u64 n) {
     return read_els;
 }
 Array<byte> File::readFile() {
-    if(!initialized || _fp == NULL || _mode == Append || _mode == CreateWrite || _fsize == 0) {
+    if(!_initialized || _fp == NULL || _mode == Append || _mode == CreateWrite || _fsize == 0) {
         return Array<byte>();
     }
     Array<byte> ba(_fsize);
@@ -214,7 +229,7 @@ s32 File::readInt() {
         return 0;
     }
     s32 val;
-    fread(&val, sizeof(s32), 1, _fp);
+    fread((void*)&val, 1, sizeof(s32), _fp);
     _pos += sizeof(s32);
     return val;
 }
@@ -255,7 +270,7 @@ string File::readLine() {
 }
 
 u64 File::write(Array<u8> bytes) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return 0;
     }
     if(bytes.count() <= 0 || bytes.ptr() == NULL) {
@@ -267,7 +282,7 @@ u64 File::write(Array<u8> bytes) {
     return written;
 }
 u64 File::write(Array<u8> bytes, u64 n) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return 0;
     }
     if(bytes.count() <= 0 || bytes.ptr() == NULL || n <= 0) {
@@ -283,7 +298,7 @@ u64 File::write(Array<u8> bytes, u64 n) {
 }
 
 void File::writeChar(char value) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return;
     }
     s32 written = fputc(value, _fp);
@@ -297,7 +312,7 @@ void File::writeByte(byte value) {
     writeChar((s8)value);
 }
 void File::writeShort(s16 value) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return;
     }
     if(fwrite(&value, sizeof(s16), 1, _fp) < 1) {
@@ -310,7 +325,7 @@ void File::writeUnsignedShort(u16 value) {
     writeShort((s16)value);
 }
 void File::writeInt(s32 value) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return;
     }
     if(fwrite(&value, sizeof(s32), 1, _fp) < 1) {
@@ -323,7 +338,7 @@ void File::writeUnsignedInt(u32 value) {
     writeInt((s32)value);
 }
 void File::writeLong(s64 value) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return;
     }
     if(fwrite(&value, sizeof(s64), 1, _fp) < 1) {
@@ -336,7 +351,7 @@ void File::writeUnsignedLong(u64 value) {
     writeLong((u64)value);
 }
 void File::writeFloat(f32 value) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return;
     }
     if(fwrite(&value, sizeof(f32), 1, _fp) < 1) {
@@ -346,7 +361,7 @@ void File::writeFloat(f32 value) {
     _fsize += sizeof(f32);
 }
 void File::writeDouble(f64 value) {
-    if(_fp == NULL || !initialized || _mode == Read) {
+    if(_fp == NULL || !_initialized || _mode == Read) {
         return;
     }
     if(fwrite(&value, sizeof(f64), 1, _fp) < 1) {
@@ -359,6 +374,47 @@ void File::writeLine(string line) {
     line += '\n';
     write(line.charArray().reinterpret<u8>(), line.length());
     return;
+}
+
+void File::setLength(u64 new_length) {
+    if(new_length == _fsize) {
+        return;
+    }
+    u8* data = (u8*)NULL;
+    while(data = (u8*)malloc(new_length), data == NULL);
+    u64 prevPos = _pos;
+    u64 prevSize = _fsize;
+    OpenMode prevMode = _mode;
+    if(_mode == OpenMode::Append || _mode == OpenMode::CreateWrite) {
+        fclose(_fp);
+        string open_mode = _modes[OpenMode::ReadWrite];
+        if(_binary) {
+            open_mode += 'b';
+        }
+        _fp = fopen(_path.c_str(), open_mode.c_str());
+    }
+    fseek(_fp, 0, SEEK_SET);
+    if(new_length > prevSize) {
+        fread(data, 1, prevSize, _fp);
+        fill_mem(data + prevSize, 0x00, new_length - prevSize);
+    }
+    else {
+        fread(data, 1, new_length, _fp);
+    }
+    fclose(_fp);
+    _fp = fopen(_path.c_str(), "wb");
+    fwrite(data, 1, new_length, _fp);
+    fclose(_fp);
+
+    string open_mode = _modes[prevMode];
+    if(_binary) {
+        open_mode += 'b';
+    }
+    _fp = fopen(_path.c_str(), open_mode.c_str());
+    fseek(_fp, prevPos, SEEK_SET);
+    _fsize = new_length;
+
+    free(data);
 }
 
 void File::initPaths(const string& path) {

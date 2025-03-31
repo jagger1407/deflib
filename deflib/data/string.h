@@ -7,6 +7,10 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#ifdef _WIN32
+int vasprintf(char**strp, const char* fmt, va_list ap);
+#endif
+
 /**
  * String Class
  * wrapper class for a char array, but with swag yk

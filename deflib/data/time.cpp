@@ -28,7 +28,7 @@ Time::Time(s32 day, s32 month, s32 year, s32 hours, s32 minutes, s32 seconds) {
 }
 
 Time Time::Now() {
-    return Time(time(NULL));
+    return Time(time((time_t*)NULL));
 }
 
 time_t Time::unixTime() {

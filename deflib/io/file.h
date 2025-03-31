@@ -5,6 +5,14 @@
 #include <stdlib.h>
 #include "../data/string.h"
 #include "../collections/array.h"
+
+#ifdef _WIN32
+#include <direct.h>
+inline char* realpath(const char* path, char* buffer) {
+    return _getcwd(buffer, PATH_MAX);
+}
+#endif
+
 /**
  * File Class
  */
@@ -125,6 +133,8 @@ public:
      */
     void close();
 
+    File& operator=(File f);
+
     /**
      * Reads n bytes into a buffer.
      * Essentially a wrapper for fread().
@@ -236,6 +246,7 @@ public:
      */
     void writeLine(string line);
 
+    void setLength(u64 new_length);
 private:
     FILE* _fp;
     string _path;
@@ -244,7 +255,8 @@ private:
     u64 _fsize;
     u64 _pos;
     OpenMode _mode;
-    bool initialized;
+    bool _binary;
+    bool _initialized;
 
     void initPaths(const string& path);
 

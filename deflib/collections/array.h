@@ -42,16 +42,17 @@ public:
      * Creates an empty array.
      */
     Array<T>() {
-        _arrptr = NULL;
-        _cur = NULL;
+        _arrptr = (T*)NULL;
+        _cur = (T*)NULL;
         _count = 0;
     }
     /**
      * Creates an array the size of num_el.
      */
     Array<T>(u64 num_el) {
-        _arrptr = NULL;
+        _arrptr = (T*)NULL;
         while(_arrptr = (T*)malloc(num_el * sizeof(T)), _arrptr == NULL);
+        fill_mem(_arrptr, 0x00, num_el * sizeof(T));
         _cur = _arrptr;
         _count = num_el;
     }
@@ -59,7 +60,7 @@ public:
      * Creates an array by copying an existing one.
      */
     Array<T>(const Array<T>& arr) {
-        _arrptr = NULL;
+        _arrptr = (T*)NULL;
         while(_arrptr = (T*)malloc(arr._count * sizeof(T)), _arrptr == NULL);
         _cur = _arrptr + (arr._cur - arr._arrptr);
         _count = arr._count;
@@ -75,7 +76,7 @@ public:
         O* p = arr.ptr();
         u64 cnt = arr.count();
 
-        _arrptr = NULL;
+        _arrptr = (T*)NULL;
         while(_arrptr = (T*)malloc(cnt * sizeof(T)), _arrptr == NULL);
         _cur = _arrptr;
         _count = cnt;
@@ -112,8 +113,8 @@ public:
     ~Array<T>() {
         if(_arrptr != NULL) {
             free(_arrptr);
-            _arrptr = NULL;
-            _cur = NULL;
+            _arrptr = (T*)NULL;
+            _cur = (T*)NULL;
         }
     }
 
@@ -248,6 +249,7 @@ public:
             ptr[i] = ptr[right];
             ptr[right] = tmp;
         }
+        return arr;
     }
 
     /**
@@ -258,8 +260,8 @@ public:
     template<typename O>
     Array<O> reinterpret() {
         Array<O> warr = Array<O>((_count * sizeof(T)) / sizeof(O), (O*)_cur);
-        _arrptr = NULL;
-        _cur = NULL;
+        _arrptr = (T*)NULL;
+        _cur = (T*)NULL;
         return warr;
     }
     /**
