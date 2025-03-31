@@ -2,14 +2,14 @@
 #include "deflib/deflib.h"
 
 void Program::Main(StringArray args) {
-    ArrayList<u16> list;
-    list.add(0x1234);
-    list.add(0xabcd);
+    ByteArray ba1 = { 0x12, 0x34, 0x56, 0x78 };
 
-    ArrayList<u8> ul = list.reinterpret<u8>();
+    ByteArray ba2(4);
+
+    Array<byte>::ArrayCopy(ba2, ba1, 4);
 
     for(int i=0;i<4;i++) {
-        string s = string::Format("%02x ", ul[i]).toUpper();
+        string s = string::Format("%02x ", ba2[i]).toUpper();
         DefCon::Print(s);
     }
     DefCon::PrintLine();

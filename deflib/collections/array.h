@@ -283,11 +283,18 @@ public:
         return dest;
     }
     /**
+     * Copies n elements from an array into another.
+     */
+    static Array<T>& ArrayCopy(Array<T>& dest, const Array<T>& src, u64 n) {
+        Copy_n(dest._arrptr, src._arrptr, n);
+        return dest;
+    }
+    /**
      * Copies an array into another.
      * If dest < src, copy until dest full
      * If dest > src, copy until src fully copied
      */
-    static Array<T>& Copy(Array<T>& dest, const Array<T>& src) {
+    static Array<T>& ArrayCopy(Array<T>& dest, const Array<T>& src) {
         if(dest._cur == NULL || src._cur == NULL) {
             return dest;
         }
