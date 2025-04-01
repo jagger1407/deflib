@@ -1,5 +1,6 @@
 #include "string.h"
 
+#ifdef _WIN32
 int vasprintf(char**strp, const char* fmt, va_list ap) {
     s32 len = _vscprintf(fmt, ap);
     if(len < 0) {
@@ -16,6 +17,7 @@ int vasprintf(char**strp, const char* fmt, va_list ap) {
     *strp = str;
     return ret;
 }
+#endif
 
 u32 string::Len(const char* str) {
     u32 len = 0;
