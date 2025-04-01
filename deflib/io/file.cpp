@@ -39,7 +39,6 @@ File::File(const string& path, OpenMode mode, bool binary) {
     initPaths(path);
     _initialized = true;
 }
-
 File::~File() {
     if(_fp != NULL) {
         fclose(_fp);
@@ -154,7 +153,10 @@ bool File::isOpen() {
 File::OpenMode File::mode() {
     return _mode;
 }
-File& File::operator=(File f) {
+File& File::operator=(const File& f) {
+    if(_fp != NULL) {
+        fclose(_fp);
+    } 
     _fp = f._fp;
     _path = f._path;
     _path_full = f._path_full;
@@ -163,12 +165,27 @@ File& File::operator=(File f) {
     _initialized = f._initialized;
     _mode = f._mode;
     _binary = f._binary;
+    _modes = f._modes;
 
-    f._fp = (FILE*)NULL;
+    (*(File*)&f)._fp = (FILE*)NULL;
 
     return *this;
 }
+File File::move() {
+    File f;
+    f._fp = _fp;
+    f._path = _path;
+    f._path_full = _path_full;
+    f._fsize = _fsize;
+    f._pos = _pos;
+    f._initialized = _initialized;
+    f._mode = _mode;
+    f._binary = _binary;
 
+    _fp = (FILE*)NULL;
+
+    return f;
+}
 u64 File::read(Array<u8>& buffer, u64 n) {
     if(!_initialized || _fp == NULL || _mode == Append || _mode == CreateWrite) {
         return 0;
@@ -229,7 +246,7 @@ s32 File::readInt() {
         return 0;
     }
     s32 val;
-    fread((void*)&val, 1, sizeof(s32), _fp);
+    fread(&val, 1, sizeof(s32), _fp);
     _pos += sizeof(s32);
     return val;
 }

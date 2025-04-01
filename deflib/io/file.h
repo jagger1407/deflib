@@ -133,8 +133,13 @@ public:
      */
     void close();
 
-    File& operator=(File f);
+    File& operator=(const File& f);
 
+    /**
+     * Creates a new File object and changes ownership
+     * of the underlying file to the newly created object.
+     */
+    File move();
     /**
      * Reads n bytes into a buffer.
      * Essentially a wrapper for fread().
