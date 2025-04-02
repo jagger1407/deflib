@@ -102,7 +102,7 @@ u64 File::size() {
     return _fsize;
 }
 
-s64 File::seek(s64 offset, s32 whence) {
+s32 File::seek(s64 offset, s32 whence) {
     if(_fp == NULL || _fsize <= 0) {
         return -1;
     }
@@ -130,6 +130,17 @@ s64 File::seek(s64 offset, s32 whence) {
         return -3;
     }
     fseek(_fp, offset, whence);
+    return 0;
+}
+s32 File::seek(s64 offset) {
+    if(_fp == NULL || _fsize <= 0) {
+        return -1;
+    }
+    if(offset < 0) {
+        return -2;
+    }
+    _pos = offset;
+    fseek(_fp, offset, SEEK_SET);
     return 0;
 }
 
