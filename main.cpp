@@ -1,18 +1,20 @@
 #include "main.h"
 #include "deflib/deflib.h"
 
-void Program::Main(StringArray args) {
-    ByteArray ba1 = { 0x12, 0x34, 0x56, 0x78 };
-
-    ByteArray ba2(4);
-
-    Array<byte>::ArrayCopy(ba2, ba1, 4);
-
-    for(int i=0;i<4;i++) {
-        string s = string::Format("%02x ", ba2[i]).toUpper();
-        DefCon::Print(s);
+void printList(ArrayList<int> arr) {
+    DefCon::Print("{ " + Cvt::ToString(arr[0]));
+    for(int i=1;i<arr.count();i++) {
+        DefCon::Print(", " + Cvt::ToString(arr[i]));
     }
-    DefCon::PrintLine();
+    DefCon::Print(" }\n");
+}
+
+void Program::Main(StringArray args) {
+    Int32Array arr = { 5, 8, 1, 2, 7, 9, 6 };
+    ArrayList<int> list = arr;
+    printList(list);
+    list[0] = 50;
+    printList(list);
 }
 
 

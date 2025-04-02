@@ -11,7 +11,10 @@
 *  Essentially a custom memcpy().
 *  @note Does not stop when encountering a null terminator.
 */
-static void * copy_mem(void* dest, const void* src, u64 n) {
+static void * copy_mem(void* dest, const void* src, s64 n) {
+    if(n == 0) {
+        return dest;
+    }
     u8* p1 = (u8*)dest;
     u8* p2 = (u8*)src;
     for(u64 i=0;i<n;i++) {
@@ -22,7 +25,7 @@ static void * copy_mem(void* dest, const void* src, u64 n) {
 /**
  * Fills n bytes of dest with given byte.
  */
-static void * fill_mem(void* dest, u8 byte, u64 n) {
+static void * fill_mem(void* dest, u8 byte, s64 n) {
     u8* ptr = (u8*)dest;
     for(u64 i=0;i<n;i++) {
         ptr[i] = byte;
@@ -49,7 +52,7 @@ public:
     /**
      * Creates an array the size of num_el.
      */
-    Array<T>(u64 num_el) {
+    Array<T>(s64 num_el) {
         _arrptr = (T*)NULL;
         while(_arrptr = (T*)malloc(num_el * sizeof(T)), _arrptr == NULL);
         fill_mem(_arrptr, 0x00, num_el * sizeof(T));
@@ -74,7 +77,7 @@ public:
     template<typename O>
     Array<T>(Array<O>& arr) {
         O* p = arr.ptr();
-        u64 cnt = arr.count();
+        s64 cnt = arr.count();
 
         _arrptr = (T*)NULL;
         while(_arrptr = (T*)malloc(cnt * sizeof(T)), _arrptr == NULL);
@@ -89,7 +92,7 @@ public:
      * Creates an array by wrapping around an existing C-Style array.
      * @note ptr should already be allocated via malloc/calloc.
      */
-    Array<T>(u64 size, T* ptr) {
+    Array<T>(s64 size, T* ptr) {
         _arrptr = ptr;
         _cur = ptr;
         _count = size;
@@ -175,6 +178,23 @@ public:
         arr._count = 0;
         return *this;
     }
+    bool operator==(const Array<T>& arr) {
+        if(_arrptr == arr._arrptr || _cur == arr._cur) {
+            return true;
+        }
+        if(_count != arr._count) {
+            return false;
+        }
+        if(_arrptr == NULL || arr._arrptr == NULL) {
+            return false;
+        }
+        for(int i=0;i<_count;i++) {
+            if(_cur[i] != arr._cur[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
     /**
      * Returns the underlying C-Style pointer (T*).
      */
@@ -182,20 +202,20 @@ public:
     /**
      * Returns the amount of elements within this array.
      */
-    u64 length() { return _count; }
+    s64 length() { return _count; }
     /**
      * Returns the amount of elements within this array.
      */
-    u64 count() { return _count; }
+    s64 count() { return _count; }
     /**
      * Returns the total size of this array in Bytes.
      */
-    u64 size() { return _count * sizeof(T); }
+    s64 size() { return _count * sizeof(T); }
     /**
      * Fills array with 0x00 Bytes.
      * Returns the total amount of elements cleared.
      */
-    u64 clear() {
+    s64 clear() {
         if(_arrptr == NULL || _count == 0) {
             return 0;
         }
@@ -213,11 +233,11 @@ public:
     /**
      * Extracts elements of this array starting at index start to the end.
      */
-    Array<T> subarray(u64 start)  {
+    Array<T> subarray(s64 start)  {
         if(start < 0 || start >= _count || _arrptr == NULL || _count <= 0) {
             return Array<T>();
         }
-        u64 cnt = _count - start;
+        s64 cnt = _count - start;
         Array<T> sub(cnt);
         copy_mem(sub._arrptr, _cur + start, cnt * sizeof(T));
         return sub;
@@ -225,7 +245,7 @@ public:
     /**
      * Extracts n elements of this array starting at index start.
      */
-    Array<T> subarray(u64 start, u64 n) {
+    Array<T> subarray(s64 start, s64 n) {
         if(start < 0 || start >= _count || _arrptr == NULL || _count <= 0) {
             return Array<T>();
         }
@@ -243,13 +263,115 @@ public:
     Array<T> reverse() {
         Array<T> arr(_count);
         T* ptr = arr._cur;
-        for(u64 i = 0; i < _count / 2; i++) {
-            u64 right = _count - 1 - i;
+        for(s64 i = 0; i < _count / 2; i++) {
+            s64 right = _count - 1 - i;
             T tmp = ptr[i];
             ptr[i] = ptr[right];
             ptr[right] = tmp;
         }
         return arr;
+    }
+
+    /**
+     * Checks whether the array contains the given value.
+     * @note uses operator==().
+     */
+    bool contains(T value) {
+        for(s64 i=0;i<_count;i++) {
+            if(_cur[i] == value) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    typedef enum {
+        Ascending,
+        Descending
+    } SortOrder;
+    /**
+     * Sorts the array using insertion sort.
+     */
+    void sort_insertion(SortOrder  order) {
+        if(_arrptr == NULL || _cur == NULL || _count <= 1) {
+            return;
+        }
+        if(order == Ascending) {
+            for(s64 i=0;i<_count;i++) {
+                s64 j = i;
+                while(j > 0 && _cur[j-1] > _cur[j]) {
+                    T tmp = _cur[j];
+                    _cur[j] = _cur[j-1];
+                    _cur[j-1] = tmp;
+                    j--;
+                }
+            }
+        }
+        else {
+            for(s64 i=0;i<_count;i++) {
+                s64 j = i;
+                while(j > 0 && _cur[j-1] < _cur[j]) {
+                    T tmp = _cur[j];
+                    _cur[j] = _cur[j-1];
+                    _cur[j-1] = tmp;
+                    j--;
+                }
+            }
+        }
+    }
+    /**
+     * Sorts the array using bubble sort.
+     */
+    void sort_bubble(SortOrder order) {
+        if(_arrptr == NULL || _cur == NULL || _count <= 1) {
+            return;
+        }
+        if(order == Ascending) {
+            for(s64 unsorted=_count-1;unsorted>=0;unsorted--) {
+                for(s64 i=1;i<=unsorted;i++) {
+                    if(_cur[i-1] > _cur[i]) {
+                        T tmp = _cur[i];
+                        _cur[i] = _cur[i-1];
+                        _cur[i-1] = tmp;
+                    }
+                }
+            }
+        }
+        else {
+            for(s64 unsorted=_count-1;unsorted>=0;unsorted--) {
+                for(s64 i=1;i<=unsorted;i++) {
+                    if(_cur[i-1] < _cur[i]) {
+                        T tmp = _cur[i];
+                        _cur[i] = _cur[i-1];
+                        _cur[i-1] = tmp;
+                    }
+                }
+            }
+        }
+    }
+    /**
+     * Sort the array by ascending order.
+     * @note this will not create a copy.
+     */
+    void sort() {
+        sort_insertion(SortOrder::Ascending);
+    }
+
+    /**
+     * Finds the index of a given value.
+     * @note returns -1 if no value was found.
+     * uses operator==().
+     */
+    u64 indexOf(T value) {
+        if(_arrptr == NULL || _count == 0) {
+            return -1;
+        }
+        for(int i=0;i<_count;i++) {
+            if(_cur[i] == value) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
@@ -278,8 +400,8 @@ public:
     /**
     *  Copies n elements from dest to src.
     */
-    static T* Copy_n(T* dest, const T* src, u32 n) {
-        for(int i=0;i<n;i++) {
+    static T* Copy_n(T* dest, const T* src, s64 n) {
+        for(s64 i=0;i<n;i++) {
             dest[i] = src[i];
         }
         return dest;
@@ -287,7 +409,7 @@ public:
     /**
      * Copies n elements from an array into another.
      */
-    static Array<T>& ArrayCopy(Array<T>& dest, const Array<T>& src, u64 n) {
+    static Array<T>& ArrayCopy(Array<T>& dest, const Array<T>& src, s64 n) {
         Copy_n(dest._arrptr, src._arrptr, n);
         return dest;
     }
@@ -300,7 +422,7 @@ public:
         if(dest._cur == NULL || src._cur == NULL) {
             return dest;
         }
-        u64 n = dest._count < src._count ? dest._count : src._count;
+        s64 n = dest._count < src._count ? dest._count : src._count;
         for(int i=0;i<n;i++) {
             dest[i] = src[i];
         }
@@ -310,7 +432,7 @@ public:
 private:
     T* _arrptr;
     T* _cur;
-    u64 _count;
+    s64 _count;
 };
 
 #endif // ARRAY_H
