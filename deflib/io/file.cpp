@@ -39,6 +39,58 @@ File::File(const string& path, OpenMode mode, bool binary) {
     initPaths(path);
     _initialized = true;
 }
+File::File(const string& path, string mode) {
+    _initialized = false;
+
+    if(mode.startsWith('r')) {
+        _mode = OpenMode::Read;
+        if(mode.contains('+')) {
+            _mode = OpenMode::ReadWrite;
+        }
+    }
+    else if(mode.startsWith('w')) {
+        _mode = OpenMode::CreateWrite;
+        if(mode.contains('+')) {
+            _mode = OpenMode::CreateReadWrite;
+        }
+    }
+    else if(mode.startsWith('a')) {
+        _mode = OpenMode::Append;
+        if(mode.contains('+')) {
+            _mode = OpenMode::ReadAppend;
+        }
+    }
+    else {
+        _fname  = "";
+        _path = "";
+        _path_full = "";
+        _fsize = 0;
+        _pos = 0;
+        return;
+    }
+    _binary = mode.contains('b');
+
+    _fp = fopen(path.c_str(), mode.c_str());
+    if(_fp == NULL) {
+        _fname  = "";
+        _path = "";
+        _path_full = "";
+        _fsize = 0;
+        _pos = 0;
+        return;
+    }
+
+    _pos = ftell(_fp);
+    fseek(_fp, 0, SEEK_SET);
+    _fsize = ftell(_fp);
+    fseek(_fp, 0, SEEK_END);
+    _fsize = ftell(_fp) - _fsize;
+    fseek(_fp, _pos, SEEK_SET);
+
+    initPaths(path);
+    _initialized = true;
+}
+
 File::~File() {
     if(_fp != NULL) {
         fclose(_fp);
@@ -110,31 +162,23 @@ int File::open(const string& path, OpenMode mode, bool binary) {
     if(_fp != NULL || _initialized) {
         return -1;
     }
-    _mode = mode;
-    string open_mode = _modes[mode];
-    if(binary) {
-        open_mode += 'b';
+    *this = File(path, mode, binary);
+    if(_initialized) {
+        return 0;
     }
-    _fp = fopen(path.c_str(), open_mode.c_str());
-    if(_fp == NULL) {
-        _fname  = "";
-        _path = "";
-        _path_full = "";
-        _fsize = 0;
-        _pos = 0;
-        return -2;
-    }
-
-    _fsize = ftell(_fp);
-    fseek(_fp, 0, SEEK_END);
-    _fsize = ftell(_fp) - _fsize;
-    fseek(_fp, 0, SEEK_SET);
-
-    initPaths(path);
-    _pos = 0;
-
-    return 0;
+    else return -2;
 }
+int File::open(const string& path, string mode) {
+    if(_fp != NULL || _initialized) {
+        return -1;
+    }
+    *this = File(path, mode);
+    if(_initialized) {
+        return 0;
+    }
+    else return -2;
+}
+
 void File::close() {
     if(_fp == NULL || !_initialized) {
         return;
@@ -170,21 +214,6 @@ File& File::operator=(const File& f) {
     (*(File*)&f)._fp = (FILE*)NULL;
 
     return *this;
-}
-File File::move() {
-    File f;
-    f._fp = _fp;
-    f._path = _path;
-    f._path_full = _path_full;
-    f._fsize = _fsize;
-    f._pos = _pos;
-    f._initialized = _initialized;
-    f._mode = _mode;
-    f._binary = _binary;
-
-    _fp = (FILE*)NULL;
-
-    return f;
 }
 u64 File::read(Array<u8>& buffer, u64 n) {
     if(!_initialized || _fp == NULL || _mode == Append || _mode == CreateWrite) {

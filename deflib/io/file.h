@@ -70,6 +70,11 @@ public:
      */
     File(const string& path, OpenMode mode, bool binary);
     /**
+     * Creates and opens a File objects with the given mode passed as a string.
+     * arguments are interchangable with fopen().
+     */
+    File(const string& path, string mode);
+    /**
      * Destructor
      */
     ~File();
@@ -127,19 +132,21 @@ public:
      */
     int open(const string& path, OpenMode mode, bool binary);
     /**
+     * Opens a file with a given mode.
+     * @note if File object was used before, close() must be called beforehand.
+     */
+    int open(const string& path, string mode);
+    /**
      * Closes the file.
      * @note Destructor already calls fclose(),
      * this usually doesn't have to be called manually.
      */
     void close();
 
-    File& operator=(const File& f);
-
     /**
-     * Creates a new File object and changes ownership
-     * of the underlying file to the newly created object.
+     * @note invalidates rvalue's file pointer!
      */
-    File move();
+    File& operator=(const File& f);
     /**
      * Reads n bytes into a buffer.
      * Essentially a wrapper for fread().
@@ -251,6 +258,11 @@ public:
      */
     void writeLine(string line);
 
+    /**
+     * Resizes the file to the new specified length.
+     * If new_length > size, zero-padding is added.
+     * If new_length < size, file is truncated.
+     */
     void setLength(u64 new_length);
 private:
     FILE* _fp;

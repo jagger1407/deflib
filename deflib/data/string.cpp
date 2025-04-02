@@ -81,6 +81,49 @@ char * string::initptr(u32 len) {
     return ptr;
 }
 
+string::string() {
+    _len = 0;
+    _c_str = (char*)NULL;
+    _cur = (char*)NULL;
+}
+string::string(const char* str) {
+    _len = Len(str);
+    _c_str = initptr(_len+1);
+    _real_len = _len + 1;
+    _cur = _c_str;
+    copy_mem(_c_str, str, _len);
+}
+string::string(const string& str) {
+    _real_len = str._real_len;
+    _len = str._len;
+    _c_str = initptr(_real_len);
+    _cur = _c_str;
+    copy_mem(_c_str, str._c_str, _len);
+}
+string::string(u32 initial_size) {
+    _len = 0;
+    _c_str = initptr(initial_size);
+    _cur = _c_str;
+    _real_len = initial_size;
+}
+string::string(Array<char>& char_array) {
+    _real_len = char_array.count();
+    if(char_array[_real_len-1] != 0x00) {
+        _real_len++;
+    }
+    _c_str = initptr(_real_len);
+    _cur = _c_str;
+    copy_mem(_c_str, char_array.ptr(), char_array.count());
+    _len = Len(_c_str);
+}
+string::~string() {
+    if(_c_str != NULL) {
+        free(_c_str);
+        _c_str = (char*)NULL;
+        _cur = (char*)NULL;
+    }
+}
+
 char * string::inclen(u32 length) {
     u32 l = _len + length + 1;
     char* new_alloc = (char*)NULL;
@@ -152,6 +195,14 @@ string & string::operator=(const Array<char> char_array) {
         free(_c_str);
     }
     u64 len = arr.count();
+    if(len == 0) {
+        _c_str = initptr(1);
+        *_c_str = 0x00;
+        _cur = _c_str;
+        _real_len = 1;
+        _len = 0;
+        return *this;
+    }
     if(arr[len-1] != 0x00) {
         _c_str = initptr(len+1);
         _real_len = len+1;
@@ -376,6 +427,25 @@ Array<int> string::getOccurrences(const string& str) {
 
     return arr;
 }
+bool string::contains(const char ch) {
+    for(int i=0;i<_len;i++) {
+        if(_cur[i] == ch) {
+            return true;
+        }
+    }
+    return false;
+}
+bool string::contains(const string& str) {
+    string s(str);
+    for(int i=0;i<_len;i++) {
+        if(_cur[i] == s._cur[0]) {
+            return Compare_n(_cur + i, str._cur, str._len) == 0;
+        }
+    }
+    return false;
+}
+
+
 string string::replace(const char og, const char ch) {
     if(_c_str == NULL || _cur == NULL) {
         return string();
@@ -526,53 +596,4 @@ string string::Format(const string& fmt, ...) {
     free(buf);
     va_end(args);
     return s;
-}
-
-
-string::string() {
-    _len = 0;
-    _c_str = (char*)NULL;
-    _cur = (char*)NULL;
-}
-
-
-string::string(const char* str) {
-    _len = Len(str);
-    _c_str = initptr(_len+1);
-    _real_len = _len + 1;
-    _cur = _c_str;
-    copy_mem(_c_str, str, _len);
-}
-
-string::string(const string& str) {
-    _real_len = str._real_len;
-    _len = str._len;
-    _c_str = initptr(_real_len);
-    _cur = _c_str;
-    copy_mem(_c_str, str._c_str, _len);
-}
-
-string::string(u32 initial_size) {
-    _len = 0;
-    _c_str = initptr(initial_size);
-    _cur = _c_str;
-    _real_len = initial_size;
-}
-string::string(Array<char>& char_array) {
-    _real_len = char_array.count();
-    if(char_array[_real_len-1] != 0x00) {
-        _real_len++;
-    }
-    _c_str = initptr(_real_len);
-    _cur = _c_str;
-    copy_mem(_c_str, char_array.ptr(), char_array.count());
-    _len = Len(_c_str);
-}
-
-string::~string() {
-    if(_c_str != NULL) {
-        free(_c_str);
-        _c_str = (char*)NULL;
-        _cur = (char*)NULL;
-    }
 }

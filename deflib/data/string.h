@@ -126,9 +126,34 @@ public:
      * as an int array containing the index of each occurrence.
      */
     Array<int> getOccurrences(const string& str);
+
+    /**
+     * Checks whether this string contains character ch.
+     */
+    bool contains(const char ch);
+    /**
+     * Checks whether this string contains substring str.
+     */
+    bool contains(const string& str);
+    /**
+     * Returns a copy of the string in which
+     * all occurrences of og are replaced with ch.
+     */
     string replace(const char og, const char ch);
+    /**
+     * Returns a copy of the string in which
+     * all occurrences of og are replaced with str.
+     */
     string replace(const char og, const string& str);
+    /**
+     * Returns a copy of the string in which
+     * all occurrences of og are replaced with ch.
+     */
     string replace(const string& og, const char ch);
+    /**
+     * Returns a copy of the string in which
+     * all occurrences of og are replaced with str.
+     */
     string replace(const string& og, const string str);
     /**
      * Splits a string using char ch as a seperator.
