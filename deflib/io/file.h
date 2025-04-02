@@ -87,7 +87,11 @@ public:
      * Repositions file pointer to be at whence + offset.
      * @note whence uses SEEK_SET, SEEK_CUR, SEEK_END from stdio.h.
      */
-    s64 seek(s64 offset, s32 whence);
+    s32 seek(s64 offset, s32 whence);
+    /**
+     * Repositions file pointer to be at the beginning of the file + offset.
+     */
+    s32 seek(s64 offset);
     /**
      * Returns the current position of the file pointer.
      * @note calls ftell() and syncs cached position.
