@@ -10,11 +10,15 @@ void printList(ArrayList<int> arr) {
 }
 
 void Program::Main(StringArray args) {
-    Int32Array arr = { 5, 8, 1, 2, 7, 9, 6 };
-    ArrayList<int> list = arr;
-    printList(list);
-    list[0] = 50;
-    printList(list);
+    File f("text.txt", File::OpenMode::Read, false);
+
+    StringArray sa = f.readAllLines();
+
+    DefCon::Printf("Line Count: %d\n", sa.length());
+    for(int i=0;i<sa.length();i++) {
+        DefCon::Printf("%d: ", sa[i].length());
+        DefCon::PrintLine(sa[i]);
+    }
 }
 
 
