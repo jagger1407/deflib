@@ -254,6 +254,16 @@ Array<byte> File::readFile() {
     fseek(_fp, _pos, SEEK_SET);
     return ba;
 }
+Array<string> File::readAllLines() {
+    if(!_initialized || _fp == NULL || _mode == Append || _mode == CreateWrite || _fsize == 0) {
+        return Array<string>();
+    }
+    seek(0);
+    Array<char> charr = readFile().reinterpret<char>();
+    string s(charr);
+
+    return s.split('\n');
+}
 
 char File::readChar() {
     if(_fp == NULL || _fsize == 0 || _pos >= _fsize || _mode == Append || _mode == CreateWrite) {

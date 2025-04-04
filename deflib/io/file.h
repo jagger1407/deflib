@@ -161,6 +161,10 @@ public:
      */
     Array<byte> readFile();
     /**
+     * Reads all lines of the file into a string Array.
+     */
+    Array<string> readAllLines();
+    /**
      * Reads a signed 8-bit value from this file.
      */
     char readChar();
