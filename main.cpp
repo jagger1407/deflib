@@ -12,13 +12,10 @@ void printList(ArrayList<int> arr) {
 void Program::Main(StringArray args) {
     File f("text.txt", File::OpenMode::Read, false);
 
-    StringArray sa = f.readAllLines();
+    File file(args[0], "r");
 
-    DefCon::Printf("Line Count: %d\n", sa.length());
-    for(int i=0;i<sa.length();i++) {
-        DefCon::Printf("%d: ", sa[i].length());
-        DefCon::PrintLine(sa[i]);
-    }
+    DefCon::PrintLine(Cvt::ToString(file.readFile()));
+    DefCon::PrintLine(file.fullPath());
 }
 
 

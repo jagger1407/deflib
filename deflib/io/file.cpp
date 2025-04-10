@@ -515,5 +515,5 @@ void File::initPaths(const string& path) {
     for(int i=0;i<cwddir;i++) {
         _path_full += dirs_cwd[i] + PATH_SEPERATOR;
     }
-    _path_full += _path.replace("../", "");
+    _path_full += _path.replace(string("..") + PATH_SEPERATOR, "");
 }
