@@ -1,5 +1,6 @@
 #include "main.h"
 #include "deflib/deflib.h"
+#include <windows.h>
 
 void printList(ArrayList<int> arr) {
     DefCon::Print("{ " + Cvt::ToString(arr[0]));
@@ -12,9 +13,10 @@ void printList(ArrayList<int> arr) {
 void Program::Main(StringArray args) {
     Stopwatch w = Stopwatch();
     w.start();
+    Sleep(1200);
     w.stop();
 
-    DefCon::Printf("Program took %.9f seconds.\n", w.elapsed());
+    DefCon::Printf("Program took %lld seconds.\n", w.elapsed_secs());
 }
 
 
