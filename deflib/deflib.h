@@ -6,6 +6,7 @@
 
 #include "data/string.h"
 #include "data/time.h"
+#include "data/stopwatch.h"
 
 #include "collections/array.h"
 typedef Array<string> StringArray;
