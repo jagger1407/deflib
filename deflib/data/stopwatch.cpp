@@ -52,6 +52,41 @@ double Stopwatch::elapsed() {
     return time;
 }
 
+u64 Stopwatch::elapsed_secs() {
+    if(!_started) {
+        return -1;
+    }
+    if(!_stopped) {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return ts.tv_sec - _ts_start.tv_sec;
+    }
+    return _ts_end.tv_sec - _ts_start.tv_sec;
+}
+
+u64 Stopwatch::elapsed_nsecs() {
+    if(!_started) {
+        return -1;
+    }
+    if(!_stopped) {
+        struct timespec ts;
+        clock_gettime(CLOCK_MONOTONIC, &ts);
+        return ts.tv_nsec - _ts_start.tv_nsec;
+    }
+    return (_ts_end.tv_sec - _ts_start.tv_sec) * 1000000000 + (_ts_end.tv_nsec - _ts_start.tv_nsec);
+}
+
+double Stopwatch::resolution() {
+    return _ts_res.tv_sec + (_ts_res.tv_nsec / 1e9);
+}
+
+u64 Stopwatch::resolution_secs() {
+    return _ts_res.tv_sec;
+}
+
+u64 Stopwatch::resolution_nsecs() {
+    return _ts_res.tv_nsec;
+}
 #endif
 
 bool Stopwatch::ticking() {
