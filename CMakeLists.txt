@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.5)
 
 project(deflib)
 
@@ -10,6 +10,8 @@ set(deflib_INC
     deflib/data/string.cpp
     deflib/data/time.h
     deflib/data/time.cpp
+    deflib/data/stopwatch.h
+    deflib/data/stopwatch.cpp
 
     deflib/collections/array.h
 

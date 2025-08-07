@@ -10,13 +10,13 @@ void printList(ArrayList<int> arr) {
 }
 
 void Program::Main(StringArray args) {
-    File f("text.txt", File::OpenMode::Read, false);
+    Stopwatch w = Stopwatch();
+    w.start();
+    w.stop();
 
-    File file(args[0], "r");
-
-    DefCon::PrintLine(Cvt::ToString(file.readFile()));
-    DefCon::PrintLine(file.fullPath());
+    DefCon::Printf("Program took %.9f seconds.\n", w.elapsed());
 }
+
 
 
 
