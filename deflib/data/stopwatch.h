@@ -16,19 +16,54 @@
 class Stopwatch
 {
 public:
+    /**
+     * Creates a new Stopwatch object.
+     */
     Stopwatch();
-
+    /**
+     * Starts the timer.
+     */
     void start();
+    /**
+     * Stops the timer and stores the elapsed time since the start.
+     */
     void stop();
+    /**
+     * Gets the elapsed time of this stopwatch in seconds (double precision).
+     */
     double elapsed();
+    /**
+     * Gets the elapsed time of this stopwatch in seconds (whole seconds).
+     */
     u64 elapsed_secs();
+    /**
+     * Gets the elapsed time of this stopwatch in nanoseconds.
+     */
     u64 elapsed_nsecs();
 
+    /**
+     * Gets the resolution of this stopwatch.
+     * @note The resolution is the smallest unit this stopwatch can use.
+     */
     double resolution();
+    /**
+     * Gets the resolution of this stopwatch in seconds (whole seconds).
+     * @note The resolution is the smallest unit this stopwatch can use.
+     */
     u64 resolution_secs();
+    /**
+     * Gets the resolution of this stopwatch in nanoseconds.
+     * @note The resolution is the smallest unit this stopwatch can use.
+     */
     u64 resolution_nsecs();
 
+    /**
+     * Checks whether the stopwatch has been started.
+     */
     bool ticking();
+    /**
+     * Checks whether the stopwatch is currently running.
+     */
     bool stopped();
 
 private:
