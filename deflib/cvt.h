@@ -5,6 +5,7 @@
 #include "data/time.h"
 #include "collections/array.h"
 #include "collections/arraylist.h"
+#include "data/stopwatch.h"
 
 /**
  * Conversion Class
@@ -109,6 +110,9 @@ public:
      * Combines strings with a given seperator between each value.
      */
     static string ToString(ArrayList<string> list, string seperator);
+
+    static string ToString(Stopwatch& watch);
+    static string ToString(Stopwatch& watch, int precision);
 
     /**
      * Converts a string into a char/s8.

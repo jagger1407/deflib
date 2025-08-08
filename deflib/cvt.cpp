@@ -226,6 +226,23 @@ string Cvt::ToString(Time& value, const string& format) {
 
     return s;
 }
+string Cvt::ToString(Stopwatch& watch) {
+    double t = watch.elapsed();
+    int hours = t / 3600;
+    int mins = (t / 60) - (hours * 60);
+    double seconds = t - (hours * 3600) - (mins * 60);
+    string s = string::Format("%d:%d:%.3f", hours, mins, seconds);
+    return s;
+}
+string Cvt::ToString(Stopwatch& watch, int precision) {
+    double t = watch.elapsed();
+    int hours = t / 3600;
+    int mins = (t / 60) - (hours * 60);
+    double seconds = t - (hours * 3600) - (mins * 60);
+    string fmt = "%d:%d:%." + ToString(precision) + "f";
+    string s = string::Format(fmt, hours, mins, seconds);
+    return s;
+}
 
 s8 Cvt::ToInt8(const string& str) {
     return (s8)(ToInt64(str) % 0x100);
