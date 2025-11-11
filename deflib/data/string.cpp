@@ -116,6 +116,19 @@ string::string(Array<char>& char_array) {
     copy_mem(_c_str, char_array.ptr(), char_array.count());
     _len = Len(_c_str);
 }
+string::string(Array<char>&& char_array) {
+    _real_len = char_array.count();
+    if(char_array[_real_len-1] != 0x00) {
+        _real_len++;
+    }
+    _c_str = initptr(_real_len);
+    _cur = _c_str;
+    copy_mem(_c_str, char_array.ptr(), char_array.count());
+    _len = Len(_c_str);
+}
+string::string(Array<u8>& char_array) : string(char_array.reinterpretCopy<char>()) {}
+string::string(Array<u8>&& char_array) : string(char_array.reinterpretCopy<char>()) {}
+
 string::~string() {
     if(_c_str != NULL) {
         free(_c_str);

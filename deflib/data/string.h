@@ -41,6 +41,18 @@ public:
      */
     string(Array<char>& char_array);
     /**
+     * Creates a string object by copying a char array (rvalue).
+     */
+    string(Array<char>&& char_array);
+    /**
+     * Creates a string object by copying a char array.
+     */
+    string(Array<u8>& char_array);
+    /**
+     * Creates a string object by copying a char array (rvalue).
+     */
+    string(Array<u8>&& char_array);
+    /**
      * Destructor.
      */
     ~string();
