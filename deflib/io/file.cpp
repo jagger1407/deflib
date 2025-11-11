@@ -14,6 +14,7 @@ File::File() {
 File::File(const string& path, OpenMode mode, bool binary) {
     _initialized = false;
     _mode = mode;
+    _fp = NULL;
     string open_mode = _modes[mode];
     if(binary) {
         open_mode += 'b';
@@ -39,8 +40,13 @@ File::File(const string& path, OpenMode mode, bool binary) {
     initPaths(path);
     _initialized = true;
 }
-File::File(const string& path, string mode) {
+File::File(const string& path, string& mode) {
     _initialized = false;
+    
+    _fp = NULL;
+    if(path.c_str() == NULL || mode.c_str() == NULL) {
+        return;
+    }
 
     if(mode.startsWith('r')) {
         _mode = OpenMode::Read;
@@ -179,7 +185,7 @@ int File::open(const string& path, OpenMode mode, bool binary) {
     }
     else return -2;
 }
-int File::open(const string& path, string mode) {
+int File::open(const string& path, string& mode) {
     if(_fp != NULL || _initialized) {
         return -1;
     }

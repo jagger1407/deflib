@@ -73,7 +73,7 @@ public:
      * Creates and opens a File objects with the given mode passed as a string.
      * arguments are interchangable with fopen().
      */
-    File(const string& path, string mode);
+    File(const string& path, string& mode);
     /**
      * Destructor
      */
@@ -139,7 +139,7 @@ public:
      * Opens a file with a given mode.
      * @note if File object was used before, close() must be called beforehand.
      */
-    int open(const string& path, string mode);
+    int open(const string& path, string& mode);
     /**
      * Closes the file.
      * @note Destructor already calls fclose(),
