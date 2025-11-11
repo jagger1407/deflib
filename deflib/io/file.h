@@ -148,7 +148,7 @@ public:
     void close();
 
     /**
-     * @note invalidates rvalue's file pointer!
+     * @note invalidates passed file pointer!
      */
     File& operator=(const File& f);
     /**
@@ -265,6 +265,10 @@ public:
      * Writes a string to this file and enters a new line.
      */
     void writeLine(string line);
+    /**
+     * Returns the underlying C-Style pointer (FILE*).
+     */
+    FILE* ptr();
 
     /**
      * Resizes the file to the new specified length.

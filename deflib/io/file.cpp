@@ -449,6 +449,10 @@ void File::writeLine(string line) {
     return;
 }
 
+FILE* File::ptr() {
+    return _fp;
+}
+
 void File::setLength(u64 new_length) {
     if(new_length == _fsize) {
         return;
